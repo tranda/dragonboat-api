@@ -1,0 +1,1010 @@
+{
+  "athletes": [
+    {
+      "id": 1,
+      "name": "Maja Marković",
+      "weight": 0,
+      "gender": "F",
+      "raceAssignments": []
+    },
+    {
+      "id": 2,
+      "name": "Olivera Lekić",
+      "weight": 75.0,
+      "gender": "F",
+      "raceAssignments": [
+        "ST Senior A Women 1000m"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Marija Dominić",
+      "weight": 0,
+      "gender": "F",
+      "raceAssignments": []
+    },
+    {
+      "id": 4,
+      "name": "Maja Matić Radonić",
+      "weight": 72.0,
+      "gender": "F",
+      "raceAssignments": [
+        "ST Senior A Women 1000m"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Marijana Bogosavac",
+      "weight": 70.0,
+      "gender": "F",
+      "raceAssignments": [
+        "ST Senior A Women 1000m"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Vesna Nikolić",
+      "weight": 0,
+      "gender": "F",
+      "raceAssignments": []
+    },
+    {
+      "id": 7,
+      "name": "Tanja Tucović",
+      "weight": 0,
+      "gender": "F",
+      "raceAssignments": []
+    },
+    {
+      "id": 8,
+      "name": "Gordana Ukmar Ćosić",
+      "weight": 62.0,
+      "gender": "F",
+      "raceAssignments": [
+        "ST Senior A Women 1000m"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "Ivana Ilić",
+      "weight": 0,
+      "gender": "F",
+      "raceAssignments": []
+    },
+    {
+      "id": 10,
+      "name": "Slađana Đurđev",
+      "weight": 0,
+      "gender": "F",
+      "raceAssignments": []
+    },
+    {
+      "id": 11,
+      "name": "Aleksandar Lazić",
+      "weight": 87.0,
+      "gender": "M",
+      "raceAssignments": [
+        "ST Senior A open 1000m"
+      ]
+    },
+    {
+      "id": 12,
+      "name": "Nikola Lončar",
+      "weight": 90.0,
+      "gender": "M",
+      "raceAssignments": [
+        "ST Senior A open 1000m"
+      ]
+    },
+    {
+      "id": 13,
+      "name": "Zvonko Biočanin",
+      "weight": 98.0,
+      "gender": "M",
+      "raceAssignments": [
+        "ST Senior A open 1000m"
+      ]
+    },
+    {
+      "id": 14,
+      "name": "Zoran Kabić",
+      "weight": 105.0,
+      "gender": "M",
+      "raceAssignments": [
+        "ST Senior A open 1000m"
+      ]
+    },
+    {
+      "id": 15,
+      "name": "Vladimir Nikolić",
+      "weight": 0,
+      "gender": "M",
+      "raceAssignments": [
+        "ST Senior A open 1000m"
+      ]
+    },
+    {
+      "id": 16,
+      "name": "Danijela Vasković",
+      "weight": 67.0,
+      "gender": "F",
+      "raceAssignments": [
+        "ST Senior A Women 1000m",
+        "SM Senior B Women 200m",
+        "SM Senior B Women 500m",
+        "SM Senior B Women 2000m"
+      ]
+    },
+    {
+      "id": 17,
+      "name": "Aleksandra Ćirović",
+      "weight": 80.0,
+      "gender": "F",
+      "raceAssignments": [
+        "ST Senior A Women 1000m"
+      ]
+    },
+    {
+      "id": 18,
+      "name": "Daliborka Jelisavčić",
+      "weight": 75.0,
+      "gender": "F",
+      "raceAssignments": [
+        "ST Senior A Women 1000m",
+        "ST Senior B Mixed 1000m",
+        "SM Senior B Women 200m",
+        "SM Senior B Women 500m",
+        "SM Senior B Women 2000m"
+      ]
+    },
+    {
+      "id": 19,
+      "name": "Snežana Šumar Nelić",
+      "weight": 64.0,
+      "gender": "F",
+      "raceAssignments": [
+        "ST Senior A Women 1000m",
+        "ST Senior B Mixed 1000m",
+        "SM Senior B Women 200m",
+        "SM Senior B Women 500m",
+        "SM Senior B Women 2000m"
+      ]
+    },
+    {
+      "id": 20,
+      "name": "Jelena Andorfer",
+      "weight": 80.0,
+      "gender": "F",
+      "raceAssignments": [
+        "ST Senior A Women 1000m",
+        "ST Senior B Mixed 1000m",
+        "SM Senior B Mixed 500m",
+        "SM Senior B Women 200m",
+        "SM Senior B Women 500m",
+        "SM Senior B Women 2000m"
+      ]
+    },
+    {
+      "id": 21,
+      "name": "Milica Mitrović",
+      "weight": 60.0,
+      "gender": "F",
+      "raceAssignments": [
+        "ST Senior A Women 1000m",
+        "ST Senior B Mixed 1000m",
+        "SM Senior B Women 200m",
+        "SM Senior B Women 500m",
+        "SM Senior B Women 2000m"
+      ]
+    },
+    {
+      "id": 22,
+      "name": "Snežana Rajh-Trandafilović",
+      "weight": 74.0,
+      "gender": "F",
+      "raceAssignments": [
+        "ST Senior A Women 1000m",
+        "ST Senior B Mixed 1000m",
+        "SM Senior B Mixed 200m",
+        "SM Senior B Mixed 500m",
+        "SM Senior B Mixed 2000m",
+        "SM Senior B Women 200m",
+        "SM Senior B Women 500m",
+        "SM Senior B Women 2000m"
+      ]
+    },
+    {
+      "id": 23,
+      "name": "Tina Lukić",
+      "weight": 85.0,
+      "gender": "F",
+      "raceAssignments": [
+        "ST Senior A Women 1000m",
+        "ST Senior B Mixed 1000m",
+        "SM Senior B Mixed 500m",
+        "SM Senior B Mixed 2000m",
+        "SM Senior B Women 200m",
+        "SM Senior B Women 500m",
+        "SM Senior B Women 2000m"
+      ]
+    },
+    {
+      "id": 24,
+      "name": "Zorica Miljković",
+      "weight": 70.0,
+      "gender": "F",
+      "raceAssignments": [
+        "ST Senior A Women 1000m"
+      ]
+    },
+    {
+      "id": 25,
+      "name": "Branka Milanko",
+      "weight": 63.0,
+      "gender": "F",
+      "raceAssignments": [
+        "ST Senior A Women 1000m",
+        "ST Senior B Mixed 1000m"
+      ]
+    },
+    {
+      "id": 26,
+      "name": "Glorija Jović",
+      "weight": 63.0,
+      "gender": "F",
+      "raceAssignments": [
+        "ST Senior A Women 1000m",
+        "ST Senior B Mixed 1000m",
+        "SM Senior B Mixed 200m",
+        "SM Senior B Mixed 2000m",
+        "SM Senior B Women 200m",
+        "SM Senior B Women 500m",
+        "SM Senior B Women 2000m"
+      ]
+    },
+    {
+      "id": 27,
+      "name": "Jelena Zajeganović",
+      "weight": 64.0,
+      "gender": "F",
+      "raceAssignments": [
+        "ST Senior A Women 1000m",
+        "SM Senior B Women 200m",
+        "SM Senior B Women 500m",
+        "SM Senior B Women 2000m"
+      ]
+    },
+    {
+      "id": 28,
+      "name": "Marija Zajeganović",
+      "weight": 70.0,
+      "gender": "F",
+      "raceAssignments": [
+        "ST Senior A Women 1000m"
+      ]
+    },
+    {
+      "id": 29,
+      "name": "Romina Radojković",
+      "weight": 54.0,
+      "gender": "F",
+      "raceAssignments": [
+        "ST Senior A Women 1000m",
+        "ST Senior B Mixed 1000m",
+        "SM Senior B Women 200m",
+        "SM Senior B Women 500m",
+        "SM Senior B Women 2000m"
+      ]
+    },
+    {
+      "id": 30,
+      "name": "Olivera Munjas",
+      "weight": 54.0,
+      "gender": "F",
+      "raceAssignments": [
+        "ST Senior A Women 1000m",
+        "ST Senior B Mixed 1000m",
+        "SM Senior B Mixed 200m",
+        "SM Senior B Mixed 500m",
+        "SM Senior B Mixed 2000m",
+        "SM Senior B Women 200m",
+        "SM Senior B Women 500m",
+        "SM Senior B Women 2000m"
+      ]
+    },
+    {
+      "id": 31,
+      "name": "Žaklina Krstić",
+      "weight": 78.0,
+      "gender": "F",
+      "raceAssignments": [
+        "ST Senior A Women 1000m"
+      ]
+    },
+    {
+      "id": 32,
+      "name": "Boris Krstonijević",
+      "weight": 95.0,
+      "gender": "M",
+      "raceAssignments": [
+        "ST Senior A open 1000m",
+        "ST Senior B Mixed 1000m",
+        "SM Senior B Mixed 200m",
+        "SM Senior B Mixed 500m",
+        "SM Senior B Open 200m",
+        "SM Senior B Open 500m",
+        "SM Senior B Open 2000m"
+      ]
+    },
+    {
+      "id": 33,
+      "name": "Saša Stojanović",
+      "weight": 93.0,
+      "gender": "M",
+      "raceAssignments": [
+        "ST Senior A open 1000m",
+        "ST Senior B Mixed 1000m",
+        "SM Senior B Mixed 500m",
+        "SM Senior B Mixed 2000m",
+        "SM Senior B Open 200m",
+        "SM Senior B Open 500m",
+        "SM Senior B Open 2000m"
+      ]
+    },
+    {
+      "id": 34,
+      "name": "Dejan Vujić",
+      "weight": 115.0,
+      "gender": "M",
+      "raceAssignments": [
+        "ST Senior A open 1000m",
+        "ST Senior B Mixed 1000m",
+        "SM Senior B Open 500m"
+      ]
+    },
+    {
+      "id": 35,
+      "name": "Bojan Denić",
+      "weight": 93.0,
+      "gender": "M",
+      "raceAssignments": [
+        "ST Senior A open 1000m",
+        "ST Senior B Mixed 1000m",
+        "SM Senior B Mixed 200m",
+        "SM Senior B Mixed 500m",
+        "SM Senior B Mixed 2000m",
+        "SM Senior B Open 200m",
+        "SM Senior B Open 500m",
+        "SM Senior B Open 2000m"
+      ]
+    },
+    {
+      "id": 36,
+      "name": "Srđan Stević",
+      "weight": 96.0,
+      "gender": "M",
+      "raceAssignments": [
+        "ST Senior A open 1000m",
+        "ST Senior B Mixed 1000m",
+        "SM Senior B Mixed 200m",
+        "SM Senior B Mixed 500m",
+        "SM Senior B Mixed 2000m",
+        "SM Senior B Open 200m",
+        "SM Senior B Open 500m",
+        "SM Senior B Open 2000m"
+      ]
+    },
+    {
+      "id": 37,
+      "name": "Srđan Trandafilović",
+      "weight": 77.0,
+      "gender": "M",
+      "raceAssignments": [
+        "ST Senior A open 1000m",
+        "ST Senior B Mixed 1000m",
+        "SM Senior B Mixed 200m",
+        "SM Senior B Mixed 500m",
+        "SM Senior B Mixed 2000m",
+        "SM Senior B Open 200m",
+        "SM Senior B Open 500m",
+        "SM Senior B Open 2000m"
+      ]
+    },
+    {
+      "id": 38,
+      "name": "Zoran Trandafilović",
+      "weight": 75.0,
+      "gender": "M",
+      "raceAssignments": [
+        "ST Senior A open 1000m",
+        "SM Senior B Open 200m"
+      ]
+    },
+    {
+      "id": 39,
+      "name": "Živko Skalušević",
+      "weight": 0,
+      "gender": "M",
+      "raceAssignments": []
+    },
+    {
+      "id": 40,
+      "name": "Dejan Kostić",
+      "weight": 0,
+      "gender": "M",
+      "raceAssignments": [
+        "ST Senior A open 1000m",
+        "SM Senior B Open 2000m"
+      ]
+    },
+    {
+      "id": 41,
+      "name": "Duško Spasovski",
+      "weight": 88.0,
+      "gender": "M",
+      "raceAssignments": [
+        "ST Senior A open 1000m",
+        "ST Senior B Mixed 1000m",
+        "SM Senior B Open 200m",
+        "SM Senior B Open 500m",
+        "SM Senior B Open 2000m"
+      ]
+    },
+    {
+      "id": 42,
+      "name": "Ljubiša Radojković",
+      "weight": 95.0,
+      "gender": "M",
+      "raceAssignments": [
+        "ST Senior A open 1000m"
+      ]
+    },
+    {
+      "id": 43,
+      "name": "Vasilije Radmanović",
+      "weight": 85.0,
+      "gender": "M",
+      "raceAssignments": [
+        "ST Senior A open 1000m",
+        "ST Senior B Mixed 1000m",
+        "SM Senior B Mixed 200m",
+        "SM Senior B Mixed 500m",
+        "SM Senior B Mixed 2000m",
+        "SM Senior B Open 200m",
+        "SM Senior B Open 500m",
+        "SM Senior B Open 2000m"
+      ]
+    },
+    {
+      "id": 44,
+      "name": "Viktor Krstić",
+      "weight": 95.0,
+      "gender": "M",
+      "raceAssignments": [
+        "ST Senior A open 1000m",
+        "ST Senior B Mixed 1000m",
+        "SM Senior B Mixed 2000m",
+        "SM Senior B Open 200m",
+        "SM Senior B Open 500m",
+        "SM Senior B Open 2000m"
+      ]
+    },
+    {
+      "id": 45,
+      "name": "Dušan Gašić",
+      "weight": 96.0,
+      "gender": "M",
+      "raceAssignments": [
+        "ST Senior A open 1000m",
+        "ST Senior B Mixed 1000m",
+        "SM Senior B Mixed 200m",
+        "SM Senior B Open 200m",
+        "SM Senior B Open 500m",
+        "SM Senior B Open 2000m"
+      ]
+    },
+    {
+      "id": 46,
+      "name": "Bojana Šepa",
+      "weight": 0,
+      "gender": "F",
+      "raceAssignments": []
+    },
+    {
+      "id": 47,
+      "name": "Dragana Jovanović",
+      "weight": 0,
+      "gender": "F",
+      "raceAssignments": []
+    },
+    {
+      "id": 48,
+      "name": "Dragana Kenić",
+      "weight": 0,
+      "gender": "F",
+      "raceAssignments": []
+    },
+    {
+      "id": 49,
+      "name": "Dušica Ranković",
+      "weight": 0,
+      "gender": "F",
+      "raceAssignments": []
+    },
+    {
+      "id": 50,
+      "name": "Nela Cajković",
+      "weight": 0,
+      "gender": "F",
+      "raceAssignments": []
+    },
+    {
+      "id": 51,
+      "name": "Olivera Redžić",
+      "weight": 0,
+      "gender": "F",
+      "raceAssignments": []
+    },
+    {
+      "id": 52,
+      "name": "Rada Maksimović",
+      "weight": 0,
+      "gender": "F",
+      "raceAssignments": []
+    },
+    {
+      "id": 53,
+      "name": "Sanja Tankosić",
+      "weight": 0,
+      "gender": "F",
+      "raceAssignments": []
+    },
+    {
+      "id": 54,
+      "name": "Snežana Lakušić",
+      "weight": 0,
+      "gender": "F",
+      "raceAssignments": []
+    },
+    {
+      "id": 55,
+      "name": "Tadijana Milićević",
+      "weight": 0,
+      "gender": "F",
+      "raceAssignments": [
+        "SM Senior B Mixed 200m"
+      ]
+    },
+    {
+      "id": 56,
+      "name": "Margareta Opsenica",
+      "weight": 0,
+      "gender": "F",
+      "raceAssignments": []
+    },
+    {
+      "id": 57,
+      "name": "Maja Djurić",
+      "weight": 0,
+      "gender": "F",
+      "raceAssignments": []
+    },
+    {
+      "id": 58,
+      "name": "Ivana Stojković Memišević",
+      "weight": 0,
+      "gender": "F",
+      "raceAssignments": []
+    },
+    {
+      "id": 59,
+      "name": "Jelena Kaplarević",
+      "weight": 0,
+      "gender": "F",
+      "raceAssignments": []
+    }
+  ],
+  "benchFactors": {
+    "standard": [
+      1.0,
+      1.07,
+      1.12,
+      1.17,
+      1.2,
+      1.2,
+      1.17,
+      1.12,
+      1.07,
+      1.0
+    ],
+    "small": [
+      1.0,
+      1.2,
+      1.3,
+      1.2,
+      1.0
+    ]
+  },
+  "races": [
+    {
+      "id": "ST_Senior_A_Women_1000m",
+      "name": "ST Senior A Women 1000m",
+      "boatType": "standard",
+      "numRows": 10,
+      "distance": "1000m",
+      "category": "ST Senior A Women",
+      "genderCategory": "Women",
+      "ageCategory": "Senior A"
+    },
+    {
+      "id": "ST_Senior_A_open_1000m",
+      "name": "ST Senior A open 1000m",
+      "boatType": "standard",
+      "numRows": 10,
+      "distance": "1000m",
+      "category": "ST Senior A open",
+      "genderCategory": "Open",
+      "ageCategory": "Senior A"
+    },
+    {
+      "id": "ST_Senior_B_Mixed_1000m",
+      "name": "ST Senior B Mixed 1000m",
+      "boatType": "standard",
+      "numRows": 10,
+      "distance": "1000m",
+      "category": "ST Senior B Mixed",
+      "genderCategory": "Mixed",
+      "ageCategory": "Senior B"
+    },
+    {
+      "id": "SM_Senior_B_Mixed_200m",
+      "name": "SM Senior B Mixed 200m",
+      "boatType": "small",
+      "numRows": 5,
+      "distance": "200m",
+      "category": "SM Senior B Mixed",
+      "genderCategory": "Mixed",
+      "ageCategory": "Senior B"
+    },
+    {
+      "id": "SM_Senior_B_Mixed_500m",
+      "name": "SM Senior B Mixed 500m",
+      "boatType": "small",
+      "numRows": 5,
+      "distance": "500m",
+      "category": "SM Senior B Mixed",
+      "genderCategory": "Mixed",
+      "ageCategory": "Senior B"
+    },
+    {
+      "id": "SM_Senior_B_Mixed_2000m",
+      "name": "SM Senior B Mixed 2000m",
+      "boatType": "small",
+      "numRows": 5,
+      "distance": "2000m",
+      "category": "SM Senior B Mixed",
+      "genderCategory": "Mixed",
+      "ageCategory": "Senior B"
+    },
+    {
+      "id": "SM_Senior_B_Open_200m",
+      "name": "SM Senior B Open 200m",
+      "boatType": "small",
+      "numRows": 5,
+      "distance": "200m",
+      "category": "SM Senior B Open",
+      "genderCategory": "Open",
+      "ageCategory": "Senior B"
+    },
+    {
+      "id": "SM_Senior_B_Open_500m",
+      "name": "SM Senior B Open 500m",
+      "boatType": "small",
+      "numRows": 5,
+      "distance": "500m",
+      "category": "SM Senior B Open",
+      "genderCategory": "Open",
+      "ageCategory": "Senior B"
+    },
+    {
+      "id": "SM_Senior_B_Open_2000m",
+      "name": "SM Senior B Open 2000m",
+      "boatType": "small",
+      "numRows": 5,
+      "distance": "2000m",
+      "category": "SM Senior B Open",
+      "genderCategory": "Open",
+      "ageCategory": "Senior B"
+    },
+    {
+      "id": "SM_Senior_B_Women_200m",
+      "name": "SM Senior B Women 200m",
+      "boatType": "small",
+      "numRows": 5,
+      "distance": "200m",
+      "category": "SM Senior B Women",
+      "genderCategory": "Women",
+      "ageCategory": "Senior B"
+    },
+    {
+      "id": "SM_Senior_B_Women_500m",
+      "name": "SM Senior B Women 500m",
+      "boatType": "small",
+      "numRows": 5,
+      "distance": "500m",
+      "category": "SM Senior B Women",
+      "genderCategory": "Women",
+      "ageCategory": "Senior B"
+    },
+    {
+      "id": "SM_Senior_B_Women_2000m",
+      "name": "SM Senior B Women 2000m",
+      "boatType": "small",
+      "numRows": 5,
+      "distance": "2000m",
+      "category": "SM Senior B Women",
+      "genderCategory": "Women",
+      "ageCategory": "Senior B"
+    }
+  ],
+  "layouts": {
+    "ST_Senior_A_Women_1000m": {
+      "drummer": null,
+      "helm": null,
+      "left": [
+        22,
+        19,
+        23,
+        4,
+        8,
+        27,
+        29,
+        31,
+        25,
+        17
+      ],
+      "right": [
+        30,
+        26,
+        20,
+        5,
+        2,
+        28,
+        18,
+        21,
+        24,
+        16
+      ],
+      "reserves": []
+    },
+    "ST_Senior_A_open_1000m": {
+      "drummer": null,
+      "helm": null,
+      "left": [
+        35,
+        12,
+        null,
+        38,
+        43,
+        14,
+        45,
+        33,
+        42,
+        41
+      ],
+      "right": [
+        36,
+        37,
+        11,
+        13,
+        44,
+        34,
+        40,
+        32,
+        null,
+        15
+      ],
+      "reserves": []
+    },
+    "ST_Senior_B_Mixed_1000m": {
+      "drummer": null,
+      "helm": null,
+      "left": [
+        22,
+        35,
+        23,
+        19,
+        43,
+        45,
+        33,
+        29,
+        25,
+        41
+      ],
+      "right": [
+        30,
+        36,
+        37,
+        20,
+        44,
+        32,
+        34,
+        18,
+        26,
+        21
+      ],
+      "reserves": []
+    },
+    "SM_Senior_B_Mixed_200m": {
+      "drummer": null,
+      "helm": null,
+      "left": [
+        35,
+        22,
+        43,
+        45,
+        55
+      ],
+      "right": [
+        36,
+        26,
+        37,
+        32,
+        30
+      ],
+      "reserves": []
+    },
+    "SM_Senior_B_Mixed_500m": {
+      "drummer": null,
+      "helm": null,
+      "left": [
+        22,
+        35,
+        43,
+        23,
+        33
+      ],
+      "right": [
+        30,
+        37,
+        36,
+        20,
+        32
+      ],
+      "reserves": []
+    },
+    "SM_Senior_B_Mixed_2000m": {
+      "drummer": null,
+      "helm": null,
+      "left": [
+        35,
+        43,
+        23,
+        33,
+        22
+      ],
+      "right": [
+        37,
+        36,
+        44,
+        26,
+        30
+      ],
+      "reserves": []
+    },
+    "SM_Senior_B_Open_200m": {
+      "drummer": null,
+      "helm": null,
+      "left": [
+        35,
+        43,
+        33,
+        38,
+        41
+      ],
+      "right": [
+        36,
+        37,
+        44,
+        32,
+        45
+      ],
+      "reserves": []
+    },
+    "SM_Senior_B_Open_500m": {
+      "drummer": null,
+      "helm": null,
+      "left": [
+        35,
+        43,
+        33,
+        45,
+        41
+      ],
+      "right": [
+        37,
+        36,
+        32,
+        34,
+        44
+      ],
+      "reserves": []
+    },
+    "SM_Senior_B_Open_2000m": {
+      "drummer": null,
+      "helm": null,
+      "left": [
+        35,
+        43,
+        33,
+        45,
+        41
+      ],
+      "right": [
+        37,
+        36,
+        44,
+        40,
+        32
+      ],
+      "reserves": []
+    },
+    "SM_Senior_B_Women_200m": {
+      "drummer": null,
+      "helm": 27,
+      "left": [
+        22,
+        23,
+        29,
+        16,
+        19
+      ],
+      "right": [
+        30,
+        26,
+        20,
+        18,
+        21
+      ],
+      "reserves": []
+    },
+    "SM_Senior_B_Women_500m": {
+      "drummer": null,
+      "helm": 27,
+      "left": [
+        22,
+        23,
+        29,
+        16,
+        19
+      ],
+      "right": [
+        30,
+        26,
+        20,
+        18,
+        21
+      ],
+      "reserves": []
+    },
+    "SM_Senior_B_Women_2000m": {
+      "drummer": null,
+      "helm": 27,
+      "left": [
+        22,
+        23,
+        29,
+        16,
+        19
+      ],
+      "right": [
+        30,
+        26,
+        20,
+        18,
+        21
+      ],
+      "reserves": []
+    }
+  }
+}

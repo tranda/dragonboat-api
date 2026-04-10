@@ -5,7 +5,7 @@ use Illuminate\Database\Seeder;
 
 class DataSeeder extends Seeder {
     public function run(): void {
-        $dataPath = base_path('../dragonboat-sittinglayout/src/data/data.json');
+        $dataPath = __DIR__ . '/data.json';
         if (!file_exists($dataPath)) { $this->command->warn("data.json not found — skipping"); return; }
         $data = json_decode(file_get_contents($dataPath), true);
 
