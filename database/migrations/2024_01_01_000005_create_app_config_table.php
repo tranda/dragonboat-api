@@ -8,8 +8,8 @@ return new class extends Migration {
         Schema::create('app_config', function (Blueprint $table) {
             $table->id();
             $table->integer('competition_year')->default(2026);
-            $table->json('gender_policy');
-            $table->json('age_rules');
+            $table->longText('gender_policy');
+            $table->longText('age_rules');
             $table->timestamps();
         });
     }

@@ -10,9 +10,9 @@ return new class extends Migration {
             $table->string('race_id')->unique();
             $table->unsignedBigInteger('drummer_id')->nullable();
             $table->unsignedBigInteger('helm_id')->nullable();
-            $table->json('left_seats');
-            $table->json('right_seats');
-            $table->json('reserves');
+            $table->longText('left_seats');
+            $table->longText('right_seats');
+            $table->longText('reserves');
             $table->timestamps();
             $table->foreign('race_id')->references('id')->on('races')->onDelete('cascade');
         });

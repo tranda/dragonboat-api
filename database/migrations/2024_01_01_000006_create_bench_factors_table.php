@@ -8,7 +8,7 @@ return new class extends Migration {
         Schema::create('bench_factors', function (Blueprint $table) {
             $table->id();
             $table->enum('boat_type', ['standard', 'small'])->unique();
-            $table->json('factors');
+            $table->longText('factors');
         });
     }
     public function down(): void { Schema::dropIfExists('bench_factors'); }
