@@ -8,7 +8,7 @@ return new class extends Migration {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('email')->unique();
+            $table->string('email', 191)->unique();
             $table->string('password');
             $table->foreignId('role_id')->constrained('roles');
             $table->unsignedBigInteger('athlete_id')->nullable();
