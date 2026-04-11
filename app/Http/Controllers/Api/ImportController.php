@@ -29,11 +29,14 @@ class ImportController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'athletes'                => 'required|array|min:1',
-            'athletes.*.id'           => 'required|integer',
-            'athletes.*.name'         => 'required|string|max:255',
-            'athletes.*.weight'       => 'nullable|numeric',
-            'athletes.*.gender'       => 'required|in:M,F,U',
+            'mode'                    => 'nullable|in:merge,overwrite',
+
+            'athletes'                  => 'required|array|min:1',
+            'athletes.*.id'             => 'required|integer',
+            'athletes.*.name'           => 'required|string|max:255',
+            'athletes.*.weight'         => 'nullable|numeric',
+            'athletes.*.gender'         => 'required|in:M,F,U',
+            'athletes.*.yearOfBirth'    => 'nullable|integer',
 
             'races'                   => 'required|array|min:1',
             'races.*.id'              => 'required|string',
@@ -49,7 +52,9 @@ class ImportController extends Controller
             'benchFactors.small'      => 'required|array',
         ]);
 
-        return DB::transaction(function () use ($data) {
+        $mode = $data['mode'] ?? 'merge';
+
+        return DB::transaction(function () use ($data, $mode) {
             // ---- Athletes: upsert by name, build payloadId → dbId map ----
             $idMap = [];
             $sheetNames = [];
@@ -60,18 +65,22 @@ class ImportController extends Controller
                 // Map 'U' (unknown) to 'M' since the schema enum is M/F only.
                 $gender = $a['gender'] === 'U' ? 'M' : $a['gender'];
 
+                $yob = $a['yearOfBirth'] ?? null;
+
                 $athlete = Athlete::where('name', $name)->first();
                 if ($athlete) {
                     $athlete->update([
-                        'weight'     => $a['weight'] ?? null,
-                        'gender'     => $gender,
-                        'is_removed' => false,
+                        'weight'        => $a['weight'] ?? null,
+                        'gender'        => $gender,
+                        'year_of_birth' => $yob,
+                        'is_removed'    => false,
                     ]);
                 } else {
                     $athlete = Athlete::create([
-                        'name'   => $name,
-                        'weight' => $a['weight'] ?? null,
-                        'gender' => $gender,
+                        'name'          => $name,
+                        'weight'        => $a['weight'] ?? null,
+                        'gender'        => $gender,
+                        'year_of_birth' => $yob,
                     ]);
                 }
                 $idMap[$a['id']] = $athlete->id;
@@ -80,18 +89,30 @@ class ImportController extends Controller
             // Athletes that no longer appear in the sheet → soft-remove.
             Athlete::whereNotIn('name', $sheetNames)->update(['is_removed' => true]);
 
-            // ---- Races + layouts: full reseed ----
-            // Delete layouts first to avoid FK contention, then races.
-            Layout::query()->delete();
-            Race::query()->delete();
+            // ---- Races + layouts ----
+            // overwrite: wipe all races and layouts, then recreate from payload
+            //            (old behavior — resets display_order and drops races
+            //             that aren't in the payload).
+            // merge (default): match existing races by name, update them in
+            //            place preserving id and display_order. New races are
+            //            appended. Races in DB but not in payload are kept.
+            if ($mode === 'overwrite') {
+                Layout::query()->delete();
+                Race::query()->delete();
+                $nextOrder = 0;
+            } else {
+                $nextOrder = ((int) Race::max('display_order')) + 1;
+            }
 
-            $order = 0;
+            $map = function ($pid) use ($idMap) {
+                if ($pid === null) return null;
+                return $idMap[$pid] ?? null;
+            };
+
             foreach ($data['races'] as $r) {
                 $name = $r['name'];
 
-                // Derive gender_category from the sheet tab name. The sheet
-                // doesn't carry this explicitly, so we sniff the same way the
-                // frontend always has.
+                // Derive gender_category from the sheet tab name.
                 $genderCategory = 'Open';
                 if (stripos($name, 'Women') !== false) {
                     $genderCategory = 'Women';
@@ -100,8 +121,7 @@ class ImportController extends Controller
                 }
 
                 // Derive age_category from the sheet tab name. Matches the
-                // frontend excelImport.ts logic: defaults to 'Premier' and
-                // checks substrings in the same order.
+                // frontend excelImport.ts logic.
                 $ageCategory = 'Premier';
                 if (stripos($name, 'Senior A') !== false)      $ageCategory = 'Senior A';
                 elseif (stripos($name, 'Senior B') !== false)  $ageCategory = 'Senior B';
@@ -111,8 +131,7 @@ class ImportController extends Controller
                 elseif (stripos($name, '24U') !== false)       $ageCategory = '24U';
                 elseif (stripos($name, 'BCP') !== false)       $ageCategory = 'BCP';
 
-                Race::create([
-                    'id'              => $r['id'],
+                $fields = [
                     'name'            => $name,
                     'boat_type'       => $r['boatType'],
                     'num_rows'        => $r['numRows'],
@@ -120,14 +139,25 @@ class ImportController extends Controller
                     'gender_category' => $genderCategory,
                     'age_category'    => $ageCategory,
                     'category'        => $r['category'] ?? null,
-                    'display_order'   => $order++,
-                ]);
+                ];
 
+                $race = Race::where('name', $name)->first();
+                if ($race) {
+                    // Update existing: preserve id and display_order.
+                    $race->update($fields);
+                } else {
+                    $race = Race::create(array_merge(
+                        ['id' => $r['id'], 'display_order' => $nextOrder++],
+                        $fields
+                    ));
+                }
+
+                // Replace the layout for this race with the imported one.
+                Layout::where('race_id', $race->id)->delete();
                 $layout = $data['layouts'][$r['id']] ?? null;
                 if (!$layout) {
-                    // Still create an empty layout so the race is usable.
                     Layout::create([
-                        'race_id'     => $r['id'],
+                        'race_id'     => $race->id,
                         'drummer_id'  => null,
                         'helm_id'     => null,
                         'left_seats'  => array_fill(0, $r['numRows'], null),
@@ -137,13 +167,8 @@ class ImportController extends Controller
                     continue;
                 }
 
-                $map = function ($pid) use ($idMap) {
-                    if ($pid === null) return null;
-                    return $idMap[$pid] ?? null;
-                };
-
                 Layout::create([
-                    'race_id'     => $r['id'],
+                    'race_id'     => $race->id,
                     'drummer_id'  => $map($layout['drummer'] ?? null),
                     'helm_id'     => $map($layout['helm'] ?? null),
                     'left_seats'  => array_map($map, $layout['left'] ?? []),
