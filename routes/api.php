@@ -21,6 +21,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/athletes/{id}/restore', [AthleteController::class, 'restore']);
 
         Route::post('/races', [RaceController::class, 'store']);
+        Route::post('/races/reorder', [RaceController::class, 'reorder']);
         Route::put('/races/{id}', [RaceController::class, 'update']);
         Route::delete('/races/{id}', [RaceController::class, 'destroy']);
         Route::post('/races/{id}/duplicate', [RaceController::class, 'duplicate']);

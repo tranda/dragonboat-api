@@ -6,13 +6,25 @@ use App\Models\Layout;
 use Illuminate\Http\Request;
 
 class RaceController extends Controller {
-    public function index() { return response()->json(Race::all()); }
+    public function index() { return response()->json(Race::orderBy('display_order')->orderBy('created_at')->get()); }
 
     public function store(Request $request) {
         $request->validate(['id' => 'required|string|unique:races,id', 'name' => 'required|string', 'boat_type' => 'required|in:standard,small', 'num_rows' => 'required|integer', 'gender_category' => 'required|in:Open,Women,Mixed', 'age_category' => 'required|string']);
-        $race = Race::create($request->only(['id', 'name', 'boat_type', 'num_rows', 'distance', 'gender_category', 'age_category', 'category']));
+        $maxOrder = (int) Race::max('display_order');
+        $race = Race::create(array_merge(
+            $request->only(['id', 'name', 'boat_type', 'num_rows', 'distance', 'gender_category', 'age_category', 'category']),
+            ['display_order' => $maxOrder + 1]
+        ));
         Layout::create(['race_id' => $race->id, 'drummer_id' => null, 'helm_id' => null, 'left_seats' => array_fill(0, $race->num_rows, null), 'right_seats' => array_fill(0, $race->num_rows, null), 'reserves' => []]);
         return response()->json($race, 201);
+    }
+
+    public function reorder(Request $request) {
+        $request->validate(['ids' => 'required|array', 'ids.*' => 'string']);
+        foreach ($request->ids as $i => $id) {
+            Race::where('id', $id)->update(['display_order' => $i]);
+        }
+        return response()->json(['message' => 'Reordered']);
     }
 
     public function update(Request $request, $id) {
