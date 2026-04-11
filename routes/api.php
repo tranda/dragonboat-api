@@ -27,10 +27,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/races/{id}/duplicate', [RaceController::class, 'duplicate']);
 
         Route::put('/layouts/{raceId}', [LayoutController::class, 'update']);
-        Route::put('/config', [ConfigController::class, 'update']);
     });
 
     Route::middleware('role:admin')->group(function () {
+        Route::put('/config', [ConfigController::class, 'update']);
         Route::post('/import', [ImportController::class, 'store']);
 
         Route::get('/users', [UserController::class, 'index']);
