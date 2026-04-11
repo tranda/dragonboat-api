@@ -99,6 +99,18 @@ class ImportController extends Controller
                     $genderCategory = 'Mixed';
                 }
 
+                // Derive age_category from the sheet tab name. Matches the
+                // frontend excelImport.ts logic: defaults to 'Premier' and
+                // checks substrings in the same order.
+                $ageCategory = 'Premier';
+                if (stripos($name, 'Senior A') !== false)      $ageCategory = 'Senior A';
+                elseif (stripos($name, 'Senior B') !== false)  $ageCategory = 'Senior B';
+                elseif (stripos($name, 'Senior C') !== false)  $ageCategory = 'Senior C';
+                elseif (stripos($name, 'Senior D') !== false)  $ageCategory = 'Senior D';
+                elseif (stripos($name, '18U') !== false)       $ageCategory = '18U';
+                elseif (stripos($name, '24U') !== false)       $ageCategory = '24U';
+                elseif (stripos($name, 'BCP') !== false)       $ageCategory = 'BCP';
+
                 Race::create([
                     'id'              => $r['id'],
                     'name'            => $name,
@@ -106,7 +118,7 @@ class ImportController extends Controller
                     'num_rows'        => $r['numRows'],
                     'distance'        => $r['distance'] ?? null,
                     'gender_category' => $genderCategory,
-                    'age_category'    => 'Senior',
+                    'age_category'    => $ageCategory,
                     'category'        => $r['category'] ?? null,
                     'display_order'   => $order++,
                 ]);
