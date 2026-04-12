@@ -19,7 +19,7 @@ class CrewSheetController extends Controller {
 
         $getName = function($id) use ($athletes) {
             if (!$id) return '';
-            return $athletes[$id]->name ?? '?';
+            return $athletes[$id]->name ?? '';
         };
 
         $pages = '';
@@ -30,38 +30,52 @@ class CrewSheetController extends Controller {
             $left = $layout->left_seats ?? [];
             $right = $layout->right_seats ?? [];
             $reserves = $layout->reserves ?? [];
+            $numRows = $race->num_rows;
+            $helmNum = $numRows * 2 + 2;
+            $reservePairs = $race->boat_type === 'standard' ? 2 : 1;
 
             $paddlersFilled = count(array_filter($left)) + count(array_filter($right));
-            $totalPaddlers = $race->num_rows * 2;
+            $totalPaddlers = $numRows * 2;
 
-            $rows = '';
-            // Drummer
-            $rows .= '<tr style="background:#fff8eb"><td class="seat">DR</td><td class="num">1</td><td class="name">' . e($getName($layout->drummer_id)) . '</td><td class="num"></td><td></td></tr>';
+            // Build left and right column entries
+            // Left: 01=drummer, 02..numRows+1=left paddlers, reserves left
+            // Right: helmNum=helm, numRows+2..numRows*2+1=right paddlers, reserves right
+
+            $leftRows = '';
+            $rightRows = '';
+
+            // Row 1: Drummer (left) | Helm (right) — separated section
+            $leftRows .= '<tr class="special"><td class="vn">' . sprintf('%02d', 1) . '</td><td class="nm">' . e($getName($layout->drummer_id)) . '</td></tr>';
+            $rightRows .= '<tr class="special"><td class="vn">' . sprintf('%02d', $helmNum) . '</td><td class="nm">' . e($getName($layout->helm_id)) . '</td></tr>';
+
+            // Spacer
+            $leftRows .= '<tr class="spacer"><td colspan="2"></td></tr>';
+            $rightRows .= '<tr class="spacer"><td colspan="2"></td></tr>';
 
             // Paddlers
-            for ($i = 0; $i < $race->num_rows; $i++) {
+            for ($i = 0; $i < $numRows; $i++) {
                 $leftNum = $i + 2;
-                $rightNum = $race->num_rows + $i + 2;
+                $rightNum = $numRows + $i + 2;
                 $ln = $left[$i] ?? null;
                 $rn = $right[$i] ?? null;
-                $rows .= '<tr>'
-                    . '<td class="seat">' . ($i + 1) . '</td>'
-                    . '<td class="num">' . $leftNum . '</td>'
-                    . '<td class="name">' . e($getName($ln)) . '</td>'
-                    . '<td class="num">' . $rightNum . '</td>'
-                    . '<td class="name">' . e($getName($rn)) . '</td>'
-                    . '</tr>';
+                $leftRows .= '<tr><td class="vn">' . sprintf('%02d', $leftNum) . '</td><td class="nm">' . e($getName($ln)) . '</td></tr>';
+                $rightRows .= '<tr><td class="vn">' . sprintf('%02d', $rightNum) . '</td><td class="nm">' . e($getName($rn)) . '</td></tr>';
             }
 
-            // Helm
-            $helmNum = $race->num_rows * 2 + 2;
-            $rows .= '<tr style="background:#fff8eb"><td class="seat">HM</td><td class="num"></td><td></td><td class="num">' . $helmNum . '</td><td class="name">' . e($getName($layout->helm_id)) . '</td></tr>';
+            // Spacer before reserves
+            $leftRows .= '<tr class="spacer"><td colspan="2"></td></tr>';
+            $rightRows .= '<tr class="spacer"><td colspan="2"></td></tr>';
 
             // Reserves
-            $reserveHtml = '';
-            if (count($reserves) > 0) {
-                $resNames = array_map(function($id) use ($getName) { return $getName($id); }, array_filter($reserves));
-                $reserveHtml = '<p class="reserves"><b>Reserves:</b> ' . e(implode(', ', $resNames)) . '</p>';
+            for ($p = 0; $p < $reservePairs; $p++) {
+                $li = $p;
+                $ri = $reservePairs + $p;
+                $leftResNum = $helmNum + $li + 1;
+                $rightResNum = $helmNum + $ri + 1;
+                $lid = $reserves[$li] ?? null;
+                $rid = $reserves[$ri] ?? null;
+                $leftRows .= '<tr><td class="vn">' . sprintf('%02d', $leftResNum) . '</td><td class="nm">' . e($getName($lid)) . '</td></tr>';
+                $rightRows .= '<tr><td class="vn">' . sprintf('%02d', $rightResNum) . '</td><td class="nm">' . e($getName($rid)) . '</td></tr>';
             }
 
             $pageBreak = $ri < count($races) - 1 ? 'page-break-after: always;' : '';
@@ -70,17 +84,16 @@ class CrewSheetController extends Controller {
             <div class="page" style="' . $pageBreak . '">
                 <h2>' . e($race->name) . '</h2>
                 <p class="sub">' . ($race->boat_type === 'standard' ? 'Standard (20)' : 'Small (10)') . ' &middot; ' . e($race->distance) . ' &middot; ' . $paddlersFilled . '/' . $totalPaddlers . ' paddlers</p>
-                <table>
-                    <thead><tr>
-                        <th style="width:30px"></th>
-                        <th style="width:24px">#</th>
-                        <th>Left</th>
-                        <th style="width:24px">#</th>
-                        <th>Right</th>
-                    </tr></thead>
-                    <tbody>' . $rows . '</tbody>
-                </table>
-                ' . $reserveHtml . '
+                <div class="cols">
+                    <table class="crew">
+                        <thead><tr><th class="vnh">Vest No</th><th class="nmh">Competitors\' Name</th></tr></thead>
+                        <tbody>' . $leftRows . '</tbody>
+                    </table>
+                    <table class="crew">
+                        <thead><tr><th class="vnh">Vest No</th><th class="nmh">Competitors\' Name</th></tr></thead>
+                        <tbody>' . $rightRows . '</tbody>
+                    </table>
+                </div>
             </div>';
         }
 
@@ -88,18 +101,22 @@ class CrewSheetController extends Controller {
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: DejaVu Sans, sans-serif; color: #222; font-size: 12px; }
-.page { padding: 15mm; }
-h2 { font-size: 16px; margin-bottom: 4px; }
-.sub { font-size: 10px; color: #888; margin-bottom: 10px; }
-table { width: 100%; border-collapse: collapse; }
-th, td { border: 1px solid #ccc; padding: 3px 6px; text-align: left; }
-th { background: #f0f0f0; font-weight: 600; color: #555; text-align: center; font-size: 10px; }
-th:nth-child(3), th:nth-child(5) { text-align: left; }
-.seat { text-align: center; color: #999; font-size: 9px; width: 30px; }
-.num { text-align: center; color: #999; font-size: 9px; width: 24px; }
-.name { font-weight: 500; }
-.reserves { margin-top: 8px; font-size: 11px; }
+body { font-family: DejaVu Sans, sans-serif; color: #222; font-size: 11px; }
+.page { padding: 12mm 15mm; }
+h2 { font-size: 16px; margin-bottom: 3px; }
+.sub { font-size: 9px; color: #888; margin-bottom: 10px; }
+.cols { display: table; width: 100%; }
+.cols .crew { display: table-cell; width: 50%; vertical-align: top; }
+.cols .crew:first-child { padding-right: 8px; }
+.cols .crew:last-child { padding-left: 8px; }
+table.crew { border-collapse: collapse; width: 100%; }
+table.crew th, table.crew td { border-bottom: 1px solid #999; padding: 4px 6px; }
+.vnh { text-align: left; font-size: 9px; font-weight: normal; color: #555; width: 40px; border-bottom: 2px solid #333 !important; }
+.nmh { text-align: left; font-size: 9px; font-weight: normal; color: #555; border-bottom: 2px solid #333 !important; }
+.vn { font-weight: bold; font-size: 11px; width: 40px; }
+.nm { font-size: 11px; }
+tr.special td { border-bottom: 2px solid #333; }
+tr.spacer td { border-bottom: none; height: 8px; }
 </style>
 </head><body>' . $pages . '</body></html>';
 
