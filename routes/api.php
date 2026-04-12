@@ -1,6 +1,6 @@
 <?php
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\{AuthController, AthleteController, RaceController, LayoutController, ConfigController, InitController, UserController, ImportController, ActivityLogController, CrewSheetController};
+use App\Http\Controllers\Api\{AuthController, AthleteController, RaceController, LayoutController, ConfigController, InitController, UserController, ImportController, ActivityLogController, CrewSheetController, CompetitionController, TeamController};
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/crew-sheet', [CrewSheetController::class, 'show']);
@@ -35,6 +35,19 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/import', [ImportController::class, 'store']);
 
         Route::get('/activity-log', [ActivityLogController::class, 'index']);
+
+        Route::get('/competitions', [CompetitionController::class, 'index']);
+        Route::post('/competitions', [CompetitionController::class, 'store']);
+        Route::put('/competitions/{id}', [CompetitionController::class, 'update']);
+        Route::delete('/competitions/{id}', [CompetitionController::class, 'destroy']);
+        Route::post('/competitions/{id}/teams', [CompetitionController::class, 'addTeam']);
+        Route::delete('/competitions/{id}/teams/{teamId}', [CompetitionController::class, 'removeTeam']);
+
+        Route::get('/teams', [TeamController::class, 'index']);
+        Route::post('/teams', [TeamController::class, 'store']);
+        Route::put('/teams/{id}', [TeamController::class, 'update']);
+        Route::delete('/teams/{id}', [TeamController::class, 'destroy']);
+
         Route::get('/users', [UserController::class, 'index']);
         Route::post('/users', [UserController::class, 'store']);
         Route::put('/users/{id}', [UserController::class, 'update']);

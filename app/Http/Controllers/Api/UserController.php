@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller {
     public function index() {
-        return response()->json(User::with('role')->get()->map(fn($u) => ['id' => $u->id, 'name' => $u->name, 'email' => $u->email, 'role' => $u->role->name, 'athlete_id' => $u->athlete_id, 'is_active' => $u->is_active]));
+        return response()->json(User::with('role', 'team')->get()->map(fn($u) => ['id' => $u->id, 'name' => $u->name, 'email' => $u->email, 'role' => $u->role->name, 'athlete_id' => $u->athlete_id, 'is_active' => $u->is_active, 'team' => $u->team ? $u->team->name : null]));
     }
     public function store(Request $request) {
         $request->validate(['name' => 'required|string', 'email' => 'required|email|unique:users', 'password' => 'required|min:6', 'role' => 'required|in:admin,coach,athlete']);

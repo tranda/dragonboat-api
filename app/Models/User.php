@@ -8,12 +8,13 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable {
     use HasFactory, Notifiable, HasApiTokens;
 
-    protected $fillable = ['name', 'email', 'password', 'role_id', 'athlete_id', 'is_active'];
+    protected $fillable = ['name', 'email', 'password', 'role_id', 'athlete_id', 'is_active', 'team_id'];
     protected $hidden = ['password', 'remember_token'];
     protected $casts = ['email_verified_at' => 'datetime', 'is_active' => 'boolean'];
 
     public function role() { return $this->belongsTo(Role::class); }
     public function athlete() { return $this->belongsTo(Athlete::class); }
+    public function team() { return $this->belongsTo(Team::class); }
     public function hasRole(string $role): bool { return $this->role?->name === $role; }
     public function isAdmin(): bool { return $this->hasRole('admin'); }
     public function isCoach(): bool { return $this->hasRole('coach'); }
