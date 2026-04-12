@@ -14,6 +14,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/races', [RaceController::class, 'index']);
     Route::get('/layouts/{raceId}', [LayoutController::class, 'show']);
     Route::get('/config', [ConfigController::class, 'show']);
+    Route::post('/pdf-token', [CrewSheetController::class, 'createToken']);
 
     Route::middleware('role:admin,coach')->group(function () {
         Route::post('/athletes', [AthleteController::class, 'store']);

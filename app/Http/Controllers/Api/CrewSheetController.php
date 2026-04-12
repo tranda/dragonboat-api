@@ -3,15 +3,34 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\{Race, Layout, Athlete};
 use Illuminate\Http\Request;
-use Laravel\Sanctum\PersonalAccessToken;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class CrewSheetController extends Controller {
+    public function createToken(Request $request) {
+        // Clean up expired tokens
+        DB::table('pdf_tokens')->where('expires_at', '<', now())->delete();
+
+        $token = Str::random(48);
+        DB::table('pdf_tokens')->insert([
+            'token' => $token,
+            'user_id' => $request->user()->id,
+            'expires_at' => now()->addSeconds(60),
+        ]);
+        return response()->json(['token' => $token]);
+    }
+
     public function show(Request $request) {
         $token = $request->query('token');
         if (!$token) return response('Unauthorized', 401);
-        $accessToken = PersonalAccessToken::findToken($token);
-        if (!$accessToken) return response('Unauthorized', 401);
+
+        // Validate short-lived PDF token
+        $row = DB::table('pdf_tokens')->where('token', $token)->where('expires_at', '>=', now())->first();
+        if (!$row) return response('Token expired or invalid', 401);
+
+        // Delete after use (single-use)
+        DB::table('pdf_tokens')->where('token', $token)->delete();
 
         $ids = explode(',', $request->query('ids', ''));
         $races = Race::whereIn('id', $ids)->orderBy('display_order')->get();
