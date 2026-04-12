@@ -84,16 +84,21 @@ class CrewSheetController extends Controller {
             <div class="page" style="' . $pageBreak . '">
                 <h2>' . e($race->name) . '</h2>
                 <p class="sub">' . ($race->boat_type === 'standard' ? 'Standard (20)' : 'Small (10)') . ' &middot; ' . e($race->distance) . ' &middot; ' . $paddlersFilled . '/' . $totalPaddlers . ' paddlers</p>
-                <div class="cols">
-                    <table class="crew">
-                        <thead><tr><th class="vnh">Vest No</th><th class="nmh">Competitors\' Name</th></tr></thead>
-                        <tbody>' . $leftRows . '</tbody>
-                    </table>
-                    <table class="crew">
-                        <thead><tr><th class="vnh">Vest No</th><th class="nmh">Competitors\' Name</th></tr></thead>
-                        <tbody>' . $rightRows . '</tbody>
-                    </table>
-                </div>
+                <table class="outer"><tr>
+                    <td class="col-left">
+                        <table class="crew">
+                            <thead><tr><th class="vnh">Vest No</th><th class="nmh">Competitors\' Name</th></tr></thead>
+                            <tbody>' . $leftRows . '</tbody>
+                        </table>
+                    </td>
+                    <td class="col-gap"></td>
+                    <td class="col-right">
+                        <table class="crew">
+                            <thead><tr><th class="vnh">Vest No</th><th class="nmh">Competitors\' Name</th></tr></thead>
+                            <tbody>' . $rightRows . '</tbody>
+                        </table>
+                    </td>
+                </tr></table>
             </div>';
         }
 
@@ -105,10 +110,11 @@ body { font-family: DejaVu Sans, sans-serif; color: #222; font-size: 11px; }
 .page { padding: 12mm 15mm; }
 h2 { font-size: 16px; margin-bottom: 3px; }
 .sub { font-size: 9px; color: #888; margin-bottom: 10px; }
-.cols { display: table; width: 100%; }
-.cols .crew { display: table-cell; width: 50%; vertical-align: top; }
-.cols .crew:first-child { padding-right: 8px; }
-.cols .crew:last-child { padding-left: 8px; }
+table.outer { width: 100%; border-collapse: collapse; }
+table.outer td { vertical-align: top; border: none; padding: 0; }
+.col-left { width: 48%; }
+.col-right { width: 48%; }
+.col-gap { width: 4%; }
 table.crew { border-collapse: collapse; width: 100%; }
 table.crew th, table.crew td { border-bottom: 1px solid #999; padding: 4px 6px; }
 .vnh { text-align: left; font-size: 9px; font-weight: normal; color: #555; width: 40px; border-bottom: 2px solid #333 !important; }
