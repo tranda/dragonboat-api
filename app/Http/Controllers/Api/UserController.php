@@ -21,22 +21,22 @@ class UserController extends Controller {
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6',
             'role' => 'required|in:admin,coach,athlete',
-            'team_ids' => 'required|array|min:1',
+            'team_ids' => $request->role === 'admin' ? 'nullable|array' : 'required|array|min:1',
             'team_ids.*' => 'exists:teams,id',
         ]);
 
-        // Validate: max one club + max one national
-        $this->validateTeamAssignment($request->team_ids);
+        if ($request->team_ids) $this->validateTeamAssignment($request->team_ids);
 
         $role = Role::where('name', $request->role)->firstOrFail();
+        $teamIds = $request->team_ids ?? [];
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role_id' => $role->id,
-            'team_id' => $request->team_ids[0],
+            'team_id' => $teamIds[0] ?? null,
         ]);
-        $user->teams()->sync($request->team_ids);
+        if (count($teamIds) > 0) $user->teams()->sync($teamIds);
 
         return response()->json(['id' => $user->id, 'name' => $user->name, 'email' => $user->email, 'role' => $role->name], 201);
     }
