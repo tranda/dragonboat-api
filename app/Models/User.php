@@ -14,7 +14,8 @@ class User extends Authenticatable {
 
     public function role() { return $this->belongsTo(Role::class); }
     public function athlete() { return $this->belongsTo(Athlete::class); }
-    public function team() { return $this->belongsTo(Team::class); }
+    public function team() { return $this->belongsTo(Team::class); } // active team
+    public function teams() { return $this->belongsToMany(Team::class, 'team_user'); }
     public function hasRole(string $role): bool { return $this->role?->name === $role; }
     public function isAdmin(): bool { return $this->hasRole('admin'); }
     public function isCoach(): bool { return $this->hasRole('coach'); }

@@ -6,26 +6,37 @@ use Illuminate\Http\Request;
 
 class InitController extends Controller {
     public function index(Request $request) {
-        $user = $request->user()->load('role', 'team');
-        $teamId = $user->team_id;
-
-        // Get competition: from header, or fallback to user's team's active competition
-        $compId = $request->header('X-Competition-Id');
+        $user = $request->user()->load('role', 'team', 'teams');
         $isAdmin = $user->isAdmin();
 
+        // Active team: from header, or user's team_id, or first team
+        $teamId = $request->header('X-Team-Id') ?: $user->team_id;
+        if (!$teamId && $user->teams->count() > 0) {
+            $teamId = $user->teams->first()->id;
+        }
+
+        // Update active team if changed
+        if ($teamId && $user->team_id != $teamId) {
+            $user->update(['team_id' => $teamId]);
+        }
+
+        // Active competition: from header, or find active one
+        $compId = $request->header('X-Competition-Id');
         if (!$compId) {
             $compQuery = Competition::where('is_active', true);
-            if (!$isAdmin) $compQuery->whereHas('teams', fn($q) => $q->where('teams.id', $teamId));
+            if (!$isAdmin && $teamId) {
+                $compQuery->whereHas('teams', fn($q) => $q->where('teams.id', $teamId));
+            }
             $comp = $compQuery->first();
             $compId = $comp?->id;
         }
 
-        // Admin sees all athletes/races for the selected competition; others see only their team's
+        // Athletes scoped by team (admin sees all if viewing another team)
         $athleteQuery = Athlete::query();
-        $raceQuery = Race::where('competition_id', $compId);
-        if (!$isAdmin) {
+        if ($teamId) {
             $athleteQuery->where('team_id', $teamId);
-            $raceQuery->where('team_id', $teamId);
+        } elseif (!$isAdmin) {
+            $athleteQuery->where('team_id', 0); // no results
         }
 
         $athletes = $athleteQuery->get()->map(fn($a) => [
@@ -34,6 +45,14 @@ class InitController extends Controller {
             'isBCP' => $a->is_bcp, 'preferredSide' => $a->preferred_side,
             'notes' => $a->notes, 'isRemoved' => $a->is_removed, 'raceAssignments' => [],
         ]);
+
+        // Races scoped by team + competition
+        $raceQuery = Race::where('competition_id', $compId);
+        if ($teamId) {
+            $raceQuery->where('team_id', $teamId);
+        } elseif (!$isAdmin) {
+            $raceQuery->where('team_id', 0);
+        }
 
         $races = $raceQuery->orderBy('display_order')->orderBy('created_at')
             ->get()->map(fn($r) => [
@@ -57,12 +76,19 @@ class InitController extends Controller {
         $bf = [];
         foreach (BenchFactor::all() as $b) $bf[$b->boat_type] = $b->factors;
 
-        // Available competitions: admin sees all, others see only their team's
+        // Competitions: admin sees all, others see only their teams' competitions
         $compQuery = Competition::orderByDesc('is_active')->orderByDesc('year');
-        if (!$user->isAdmin()) {
+        if (!$isAdmin && $teamId) {
             $compQuery->whereHas('teams', fn($q) => $q->where('teams.id', $teamId));
         }
         $competitions = $compQuery->get()->map(fn($c) => ['id' => $c->id, 'name' => $c->name, 'year' => $c->year, 'location' => $c->location, 'isActive' => $c->is_active]);
+
+        // User's teams
+        $userTeams = $user->teams->map(fn($t) => ['id' => $t->id, 'name' => $t->name]);
+        if ($isAdmin) {
+            // Admin can switch to any team
+            $userTeams = \App\Models\Team::orderBy('name')->get()->map(fn($t) => ['id' => $t->id, 'name' => $t->name]);
+        }
 
         return response()->json([
             'athletes' => $athletes,
@@ -73,10 +99,12 @@ class InitController extends Controller {
             'user' => [
                 'id' => $user->id, 'name' => $user->name, 'email' => $user->email,
                 'role' => $user->role->name, 'athlete_id' => $user->athlete_id,
-                'team' => $user->team ? ['id' => $user->team->id, 'name' => $user->team->name] : null,
+                'team' => $teamId ? ($user->teams->find($teamId) ?? \App\Models\Team::find($teamId)) : null,
             ],
+            'teams' => $userTeams,
             'competitions' => $competitions,
-            'activeCompetitionId' => $compId,
+            'activeTeamId' => $teamId ? (int)$teamId : null,
+            'activeCompetitionId' => $compId ? (int)$compId : null,
         ]);
     }
 }
