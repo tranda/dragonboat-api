@@ -11,7 +11,7 @@ class AthleteController extends Controller {
 
     public function store(Request $request) {
         $request->validate(['name' => 'required|string|max:255', 'gender' => 'required|in:M,F']);
-        $data = $request->only(['name', 'weight', 'gender', 'year_of_birth', 'is_bcp', 'preferred_side', 'notes']);
+        $data = $request->only(['name', 'weight', 'gender', 'year_of_birth', 'is_bcp', 'preferred_side', 'is_helm', 'is_drummer', 'edbf_id', 'notes']);
         $data['team_id'] = $request->user()->team_id;
         $athlete = Athlete::create($data);
         ActivityLog::log('created', 'athlete', $athlete->name);
@@ -20,7 +20,7 @@ class AthleteController extends Controller {
 
     public function update(Request $request, $id) {
         $athlete = Athlete::where('team_id', $request->user()->team_id)->findOrFail($id);
-        $athlete->update($request->only(['name', 'weight', 'gender', 'year_of_birth', 'is_bcp', 'preferred_side', 'notes', 'is_removed']));
+        $athlete->update($request->only(['name', 'weight', 'gender', 'year_of_birth', 'is_bcp', 'preferred_side', 'is_helm', 'is_drummer', 'edbf_id', 'notes', 'is_removed']));
         ActivityLog::log('updated', 'athlete', $athlete->name);
         return response()->json($athlete);
     }
