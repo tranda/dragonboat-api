@@ -39,9 +39,9 @@ return new class extends Migration {
         ]);
 
         $teamId = DB::table('teams')->insertGetId([
-            'name' => 'Motion Belgrade',
+            'name' => 'National Team Serbia',
             'country' => 'Serbia',
-            'type' => 'club',
+            'type' => 'national',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
