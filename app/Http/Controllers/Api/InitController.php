@@ -11,22 +11,31 @@ class InitController extends Controller {
 
         // Get competition: from header, or fallback to user's team's active competition
         $compId = $request->header('X-Competition-Id');
+        $isAdmin = $user->isAdmin();
+
         if (!$compId) {
-            $comp = Competition::where('is_active', true)
-                ->whereHas('teams', fn($q) => $q->where('teams.id', $teamId))
-                ->first();
+            $compQuery = Competition::where('is_active', true);
+            if (!$isAdmin) $compQuery->whereHas('teams', fn($q) => $q->where('teams.id', $teamId));
+            $comp = $compQuery->first();
             $compId = $comp?->id;
         }
 
-        $athletes = Athlete::where('team_id', $teamId)->get()->map(fn($a) => [
+        // Admin sees all athletes/races for the selected competition; others see only their team's
+        $athleteQuery = Athlete::query();
+        $raceQuery = Race::where('competition_id', $compId);
+        if (!$isAdmin) {
+            $athleteQuery->where('team_id', $teamId);
+            $raceQuery->where('team_id', $teamId);
+        }
+
+        $athletes = $athleteQuery->get()->map(fn($a) => [
             'id' => $a->id, 'name' => $a->name, 'weight' => $a->weight ?? 0,
             'gender' => $a->gender, 'yearOfBirth' => $a->year_of_birth,
             'isBCP' => $a->is_bcp, 'preferredSide' => $a->preferred_side,
             'notes' => $a->notes, 'isRemoved' => $a->is_removed, 'raceAssignments' => [],
         ]);
 
-        $races = Race::where('team_id', $teamId)->where('competition_id', $compId)
-            ->orderBy('display_order')->orderBy('created_at')
+        $races = $raceQuery->orderBy('display_order')->orderBy('created_at')
             ->get()->map(fn($r) => [
                 'id' => $r->id, 'name' => $r->name, 'boatType' => $r->boat_type,
                 'numRows' => $r->num_rows, 'distance' => $r->distance,
@@ -48,10 +57,12 @@ class InitController extends Controller {
         $bf = [];
         foreach (BenchFactor::all() as $b) $bf[$b->boat_type] = $b->factors;
 
-        // Available competitions for this team
-        $competitions = Competition::whereHas('teams', fn($q) => $q->where('teams.id', $teamId))
-            ->orderByDesc('is_active')->orderByDesc('year')
-            ->get()->map(fn($c) => ['id' => $c->id, 'name' => $c->name, 'year' => $c->year, 'location' => $c->location, 'isActive' => $c->is_active]);
+        // Available competitions: admin sees all, others see only their team's
+        $compQuery = Competition::orderByDesc('is_active')->orderByDesc('year');
+        if (!$user->isAdmin()) {
+            $compQuery->whereHas('teams', fn($q) => $q->where('teams.id', $teamId));
+        }
+        $competitions = $compQuery->get()->map(fn($c) => ['id' => $c->id, 'name' => $c->name, 'year' => $c->year, 'location' => $c->location, 'isActive' => $c->is_active]);
 
         return response()->json([
             'athletes' => $athletes,
