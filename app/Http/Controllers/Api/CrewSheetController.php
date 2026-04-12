@@ -85,7 +85,7 @@ class CrewSheetController extends Controller {
         }
 
         $html = '<!DOCTYPE html>
-<html><head><meta charset="utf-8">
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: DejaVu Sans, sans-serif; color: #222; font-size: 12px; }
@@ -103,7 +103,11 @@ th:nth-child(3), th:nth-child(5) { text-align: left; }
 </style>
 </head><body>' . $pages . '</body></html>';
 
-        $pdf = Pdf::loadHTML($html)->setPaper('a4', 'portrait');
+        $pdf = Pdf::loadHTML($html)
+            ->setPaper('a4', 'portrait')
+            ->setOption('defaultFont', 'DejaVu Sans')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isRemoteEnabled', false);
 
         $filename = count($races) === 1 ? ($races[0]->name . '.pdf') : 'crew-sheets.pdf';
 
