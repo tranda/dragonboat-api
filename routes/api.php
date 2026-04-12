@@ -1,6 +1,6 @@
 <?php
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\{AuthController, AthleteController, RaceController, LayoutController, ConfigController, InitController, UserController, ImportController, ActivityLogController, CrewSheetController, CompetitionController, TeamController};
+use App\Http\Controllers\Api\{AuthController, AthleteController, RaceController, LayoutController, ConfigController, InitController, UserController, ImportController, ActivityLogController, CrewSheetController, CompetitionController, TeamController, EventsImportController};
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/crew-sheet', [CrewSheetController::class, 'show']);
@@ -38,6 +38,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/import', [ImportController::class, 'store']);
 
         Route::get('/activity-log', [ActivityLogController::class, 'index']);
+        Route::post('/events-import/athletes', [EventsImportController::class, 'fetchAthletes']);
 
         Route::get('/competitions', [CompetitionController::class, 'index']);
         Route::post('/competitions', [CompetitionController::class, 'store']);
