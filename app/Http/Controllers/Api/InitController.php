@@ -39,12 +39,19 @@ class InitController extends Controller {
             $athleteQuery->where('team_id', 0); // no results
         }
 
+        // Get registered athlete IDs for current competition
+        $registeredIds = $compId ? \Illuminate\Support\Facades\DB::table('competition_athlete')
+            ->where('competition_id', $compId)->pluck('athlete_id')->toArray() : [];
+        $registeredSet = array_flip($registeredIds);
+
         $athletes = $athleteQuery->get()->map(fn($a) => [
             'id' => $a->id, 'name' => $a->name, 'weight' => $a->weight ?? 0,
             'gender' => $a->gender, 'yearOfBirth' => $a->year_of_birth,
             'isBCP' => $a->is_bcp, 'preferredSide' => $a->preferred_side,
             'isHelm' => $a->is_helm, 'isDrummer' => $a->is_drummer, 'edbfId' => $a->edbf_id,
-            'notes' => $a->notes, 'isRemoved' => $a->is_removed, 'raceAssignments' => [],
+            'notes' => $a->notes, 'isRemoved' => $a->is_removed,
+            'isRegistered' => isset($registeredSet[$a->id]),
+            'raceAssignments' => [],
         ]);
 
         // Races scoped by team + competition

@@ -7,5 +7,6 @@ class Competition extends Model {
     protected $casts = ['is_active' => 'boolean'];
 
     public function teams() { return $this->belongsToMany(Team::class, 'competition_team'); }
+    public function athletes() { return $this->belongsToMany(Athlete::class, 'competition_athlete'); }
     public function races() { return $this->hasMany(Race::class); }
 }

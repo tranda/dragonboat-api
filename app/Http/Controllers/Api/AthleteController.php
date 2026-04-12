@@ -38,4 +38,18 @@ class AthleteController extends Controller {
         ActivityLog::log('restored', 'athlete', $athlete->name);
         return response()->json(['message' => 'Athlete restored']);
     }
+
+    public function register(Request $request, $id) {
+        $compId = $request->input('competition_id');
+        $athlete = Athlete::where('team_id', $request->user()->team_id)->findOrFail($id);
+        $athlete->competitions()->syncWithoutDetaching([$compId]);
+        return response()->json(['message' => 'Registered']);
+    }
+
+    public function unregister(Request $request, $id) {
+        $compId = $request->input('competition_id');
+        $athlete = Athlete::where('team_id', $request->user()->team_id)->findOrFail($id);
+        $athlete->competitions()->detach($compId);
+        return response()->json(['message' => 'Unregistered']);
+    }
 }
