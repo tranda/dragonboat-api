@@ -53,8 +53,19 @@ class ImportController extends Controller
         ]);
 
         $mode = $data['mode'] ?? 'merge';
+        $user = $request->user();
+        $teamId = $user->team_id;
 
-        return DB::transaction(function () use ($data, $mode) {
+        // Resolve competition: from header, or active one for this team
+        $compId = $request->header('X-Competition-Id');
+        if (!$compId) {
+            $comp = \App\Models\Competition::where('is_active', true)
+                ->whereHas('teams', fn($q) => $q->where('teams.id', $teamId))
+                ->first();
+            $compId = $comp?->id;
+        }
+
+        return DB::transaction(function () use ($data, $mode, $teamId, $compId) {
             // ---- Athletes: upsert by name, build payloadId → dbId map ----
             $idMap = [];
             $sheetNames = [];
@@ -67,7 +78,7 @@ class ImportController extends Controller
 
                 $yob = $a['yearOfBirth'] ?? null;
 
-                $athlete = Athlete::where('name', $name)->first();
+                $athlete = Athlete::where('name', $name)->where('team_id', $teamId)->first();
                 if ($athlete) {
                     $athlete->update([
                         'weight'        => $a['weight'] ?? null,
@@ -81,13 +92,14 @@ class ImportController extends Controller
                         'weight'        => $a['weight'] ?? null,
                         'gender'        => $gender,
                         'year_of_birth' => $yob,
+                        'team_id'       => $teamId,
                     ]);
                 }
                 $idMap[$a['id']] = $athlete->id;
             }
 
-            // Athletes that no longer appear in the sheet → soft-remove.
-            Athlete::whereNotIn('name', $sheetNames)->update(['is_removed' => true]);
+            // Athletes that no longer appear in the sheet → soft-remove (team-scoped).
+            Athlete::where('team_id', $teamId)->whereNotIn('name', $sheetNames)->update(['is_removed' => true]);
 
             // ---- Races + layouts ----
             // overwrite: wipe all races and layouts, then recreate from payload
@@ -97,11 +109,12 @@ class ImportController extends Controller
             //            place preserving id and display_order. New races are
             //            appended. Races in DB but not in payload are kept.
             if ($mode === 'overwrite') {
-                Layout::query()->delete();
-                Race::query()->delete();
+                $raceIds = Race::where('team_id', $teamId)->where('competition_id', $compId)->pluck('id');
+                Layout::whereIn('race_id', $raceIds)->delete();
+                Race::where('team_id', $teamId)->where('competition_id', $compId)->delete();
                 $nextOrder = 0;
             } else {
-                $nextOrder = ((int) Race::max('display_order')) + 1;
+                $nextOrder = ((int) Race::where('team_id', $teamId)->where('competition_id', $compId)->max('display_order')) + 1;
             }
 
             $map = function ($pid) use ($idMap) {
@@ -141,13 +154,12 @@ class ImportController extends Controller
                     'category'        => $r['category'] ?? null,
                 ];
 
-                $race = Race::where('name', $name)->first();
+                $race = Race::where('name', $name)->where('team_id', $teamId)->where('competition_id', $compId)->first();
                 if ($race) {
-                    // Update existing: preserve id and display_order.
                     $race->update($fields);
                 } else {
                     $race = Race::create(array_merge(
-                        ['id' => $r['id'], 'display_order' => $nextOrder++],
+                        ['id' => $r['id'], 'display_order' => $nextOrder++, 'team_id' => $teamId, 'competition_id' => $compId],
                         $fields
                     ));
                 }
