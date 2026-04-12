@@ -11,6 +11,8 @@ class AuthController extends Controller {
         $user = User::where('email', $request->email)->first();
         if (!$user || !Hash::check($request->password, $user->password))
             return response()->json(['error' => 'Invalid credentials'], 401);
+        if (!$user->is_active)
+            return response()->json(['error' => 'Account is inactive'], 403);
         $token = $user->createToken('api-token')->plainTextToken;
         return response()->json([
             'token' => $token,
