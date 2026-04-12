@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
-use App\Models\Layout;
+use App\Models\{Layout, ActivityLog, Race};
 use Illuminate\Http\Request;
 
 class LayoutController extends Controller {
@@ -13,6 +13,8 @@ class LayoutController extends Controller {
     public function update(Request $request, $raceId) {
         $l = Layout::where('race_id', $raceId)->firstOrFail();
         $l->update(['drummer_id' => $request->input('drummer'), 'helm_id' => $request->input('helm'), 'left_seats' => $request->input('left'), 'right_seats' => $request->input('right'), 'reserves' => $request->input('reserves', [])]);
+        $race = Race::find($raceId);
+        ActivityLog::log('updated', 'layout', $race?->name ?? $raceId);
         return response()->json(['message' => 'Layout saved']);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\{AuthController, AthleteController, RaceController, LayoutController, ConfigController, InitController, UserController, ImportController};
+use App\Http\Controllers\Api\{AuthController, AthleteController, RaceController, LayoutController, ConfigController, InitController, UserController, ImportController, ActivityLogController};
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -33,6 +33,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/config', [ConfigController::class, 'update']);
         Route::post('/import', [ImportController::class, 'store']);
 
+        Route::get('/activity-log', [ActivityLogController::class, 'index']);
         Route::get('/users', [UserController::class, 'index']);
         Route::post('/users', [UserController::class, 'store']);
         Route::put('/users/{id}', [UserController::class, 'update']);
