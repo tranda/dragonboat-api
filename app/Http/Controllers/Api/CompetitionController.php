@@ -11,13 +11,13 @@ class CompetitionController extends Controller {
 
     public function store(Request $request) {
         $request->validate(['name' => 'required|string', 'year' => 'required|integer']);
-        $comp = Competition::create($request->only(['name', 'year', 'location', 'is_active']));
+        $comp = Competition::create($request->only(['name', 'year', 'location', 'is_active', 'gender_policy']));
         return response()->json($comp, 201);
     }
 
     public function update(Request $request, $id) {
         $comp = Competition::findOrFail($id);
-        $comp->update($request->only(['name', 'year', 'location', 'is_active']));
+        $comp->update($request->only(['name', 'year', 'location', 'is_active', 'gender_policy']));
         return response()->json($comp);
     }
 
