@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void {
         Schema::table('competitions', function (Blueprint $table) {
-            $table->json('gender_policy')->nullable()->after('is_active');
+            $table->longText('gender_policy')->nullable()->after('is_active');
         });
     }
     public function down(): void {
