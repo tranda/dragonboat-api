@@ -31,6 +31,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/races/{id}/duplicate', [RaceController::class, 'duplicate']);
 
         Route::put('/layouts/{raceId}', [LayoutController::class, 'update']);
+        Route::post('/layouts/{raceId}/undo', [LayoutController::class, 'undo']);
+        Route::post('/layouts/{raceId}/redo', [LayoutController::class, 'redo']);
     });
 
     Route::middleware('role:admin')->group(function () {

@@ -7,51 +7,116 @@ use Illuminate\Http\Request;
 class LayoutController extends Controller {
     public function show($raceId) {
         $l = Layout::where('race_id', $raceId)->firstOrFail();
-        return response()->json(['race_id' => $l->race_id, 'drummer' => $l->drummer_id, 'helm' => $l->helm_id, 'left' => $l->left_seats, 'right' => $l->right_seats, 'reserves' => $l->reserves]);
+        return response()->json($this->respond($l, $raceId));
     }
 
     public function update(Request $request, $raceId) {
         $l = Layout::where('race_id', $raceId)->firstOrFail();
 
-        $oldDrummer = $l->drummer_id;
-        $oldHelm = $l->helm_id;
-        $oldLeft = $l->left_seats ?? [];
-        $oldRight = $l->right_seats ?? [];
-        $oldReserves = $l->reserves ?? [];
+        $oldState = $this->captureState($l);
+        $newState = [
+            'drummer' => $request->input('drummer'),
+            'helm' => $request->input('helm'),
+            'left' => $request->input('left', []),
+            'right' => $request->input('right', []),
+            'reserves' => $request->input('reserves', []),
+        ];
 
-        $newDrummer = $request->input('drummer');
-        $newHelm = $request->input('helm');
-        $newLeft = $request->input('left', []);
-        $newRight = $request->input('right', []);
-        $newReserves = $request->input('reserves', []);
+        $this->applyState($l, $newState);
 
-        $l->update([
-            'drummer_id' => $newDrummer,
-            'helm_id' => $newHelm,
-            'left_seats' => $newLeft,
-            'right_seats' => $newRight,
-            'reserves' => $newReserves,
-        ]);
+        // Clear redo stack: any previously-undone entries for this race are abandoned
+        ActivityLog::where('entity_type', 'layout')
+            ->where('entity_id', (string)$raceId)
+            ->where('is_undone', true)
+            ->delete();
 
         $race = Race::find($raceId);
-        $details = $this->buildDiff(
-            $oldDrummer, $newDrummer,
-            $oldHelm, $newHelm,
-            $oldLeft, $newLeft,
-            $oldRight, $newRight,
-            $oldReserves, $newReserves
-        );
-        ActivityLog::log('updated', 'layout', $race?->name ?? $raceId, $details);
-        return response()->json(['message' => 'Layout saved']);
+        $details = $this->buildDiff($oldState, $newState);
+        ActivityLog::log('updated', 'layout', $race?->name ?? $raceId, $details, (string)$raceId, $oldState, $newState);
+
+        return response()->json($this->respond($l->fresh(), $raceId));
     }
 
-    private function buildDiff($oldDrummer, $newDrummer, $oldHelm, $newHelm, $oldLeft, $newLeft, $oldRight, $newRight, $oldReserves, $newReserves): ?string {
+    public function undo($raceId) {
+        $entry = ActivityLog::where('entity_type', 'layout')
+            ->where('entity_id', (string)$raceId)
+            ->where('is_undone', false)
+            ->orderByDesc('created_at')
+            ->orderByDesc('id')
+            ->first();
+        if (!$entry || !$entry->before_state) {
+            return response()->json(['message' => 'Nothing to undo'], 404);
+        }
+        $l = Layout::where('race_id', $raceId)->firstOrFail();
+        $this->applyState($l, $entry->before_state);
+        $entry->update(['is_undone' => true]);
+        return response()->json($this->respond($l->fresh(), $raceId));
+    }
+
+    public function redo($raceId) {
+        $entry = ActivityLog::where('entity_type', 'layout')
+            ->where('entity_id', (string)$raceId)
+            ->where('is_undone', true)
+            ->orderBy('created_at')
+            ->orderBy('id')
+            ->first();
+        if (!$entry || !$entry->after_state) {
+            return response()->json(['message' => 'Nothing to redo'], 404);
+        }
+        $l = Layout::where('race_id', $raceId)->firstOrFail();
+        $this->applyState($l, $entry->after_state);
+        $entry->update(['is_undone' => false]);
+        return response()->json($this->respond($l->fresh(), $raceId));
+    }
+
+    private function captureState(Layout $l): array {
+        return [
+            'drummer' => $l->drummer_id,
+            'helm' => $l->helm_id,
+            'left' => $l->left_seats ?? [],
+            'right' => $l->right_seats ?? [],
+            'reserves' => $l->reserves ?? [],
+        ];
+    }
+
+    private function applyState(Layout $l, array $state): void {
+        $l->update([
+            'drummer_id' => $state['drummer'] ?? null,
+            'helm_id' => $state['helm'] ?? null,
+            'left_seats' => $state['left'] ?? [],
+            'right_seats' => $state['right'] ?? [],
+            'reserves' => $state['reserves'] ?? [],
+        ]);
+    }
+
+    private function respond(Layout $l, $raceId): array {
+        $canUndo = ActivityLog::where('entity_type', 'layout')
+            ->where('entity_id', (string)$raceId)
+            ->where('is_undone', false)
+            ->exists();
+        $canRedo = ActivityLog::where('entity_type', 'layout')
+            ->where('entity_id', (string)$raceId)
+            ->where('is_undone', true)
+            ->exists();
+        return [
+            'race_id' => $l->race_id,
+            'drummer' => $l->drummer_id,
+            'helm' => $l->helm_id,
+            'left' => $l->left_seats,
+            'right' => $l->right_seats,
+            'reserves' => $l->reserves,
+            'can_undo' => $canUndo,
+            'can_redo' => $canRedo,
+        ];
+    }
+
+    private function buildDiff(array $old, array $new): ?string {
         $norm = fn($id) => $id === null || $id === '' ? null : (int)$id;
-        $oldDrummer = $norm($oldDrummer); $newDrummer = $norm($newDrummer);
-        $oldHelm = $norm($oldHelm); $newHelm = $norm($newHelm);
-        $oldLeft = array_map($norm, $oldLeft); $newLeft = array_map($norm, $newLeft);
-        $oldRight = array_map($norm, $oldRight); $newRight = array_map($norm, $newRight);
-        $oldReserves = array_map($norm, $oldReserves); $newReserves = array_map($norm, $newReserves);
+        $oldDrummer = $norm($old['drummer'] ?? null); $newDrummer = $norm($new['drummer'] ?? null);
+        $oldHelm = $norm($old['helm'] ?? null); $newHelm = $norm($new['helm'] ?? null);
+        $oldLeft = array_map($norm, $old['left'] ?? []); $newLeft = array_map($norm, $new['left'] ?? []);
+        $oldRight = array_map($norm, $old['right'] ?? []); $newRight = array_map($norm, $new['right'] ?? []);
+        $oldReserves = array_map($norm, $old['reserves'] ?? []); $newReserves = array_map($norm, $new['reserves'] ?? []);
 
         $ids = array_filter(array_unique(array_merge(
             [$oldDrummer, $newDrummer, $oldHelm, $newHelm],

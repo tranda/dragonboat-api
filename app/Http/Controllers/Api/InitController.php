@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
-use App\Models\{Athlete, Race, Layout, AppConfig, BenchFactor, Competition};
+use App\Models\{Athlete, Race, Layout, AppConfig, BenchFactor, Competition, ActivityLog};
 use Illuminate\Http\Request;
 
 class InitController extends Controller {
@@ -71,9 +71,20 @@ class InitController extends Controller {
             ]);
 
         $raceIds = $races->pluck('id');
+        $historyStatus = [];
+        if ($raceIds->count() > 0) {
+            $raceIdStrings = $raceIds->map(fn($id) => (string)$id)->all();
+            foreach (ActivityLog::where('entity_type', 'layout')->whereIn('entity_id', $raceIdStrings)->select('entity_id', 'is_undone')->get() as $log) {
+                $rid = $log->entity_id;
+                if (!isset($historyStatus[$rid])) $historyStatus[$rid] = ['can_undo' => false, 'can_redo' => false];
+                if ($log->is_undone) $historyStatus[$rid]['can_redo'] = true;
+                else $historyStatus[$rid]['can_undo'] = true;
+            }
+        }
         $layouts = [];
         foreach (Layout::whereIn('race_id', $raceIds)->get() as $l) {
-            $layouts[$l->race_id] = ['drummer' => $l->drummer_id, 'helm' => $l->helm_id, 'left' => $l->left_seats, 'right' => $l->right_seats, 'reserves' => $l->reserves];
+            $status = $historyStatus[(string)$l->race_id] ?? ['can_undo' => false, 'can_redo' => false];
+            $layouts[$l->race_id] = ['drummer' => $l->drummer_id, 'helm' => $l->helm_id, 'left' => $l->left_seats, 'right' => $l->right_seats, 'reserves' => $l->reserves, 'can_undo' => $status['can_undo'], 'can_redo' => $status['can_redo']];
         }
 
         $cm = AppConfig::where('team_id', $teamId)->where('competition_id', $compId)->first()
