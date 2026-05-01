@@ -7,8 +7,8 @@ return new class extends Migration {
     public function up(): void {
         Schema::table('activity_log', function (Blueprint $table) {
             $table->string('entity_id')->nullable()->after('entity_name');
-            $table->json('before_state')->nullable()->after('details');
-            $table->json('after_state')->nullable()->after('before_state');
+            $table->longText('before_state')->nullable()->after('details');
+            $table->longText('after_state')->nullable()->after('before_state');
             $table->boolean('is_undone')->default(false)->after('after_state');
             $table->index(['entity_type', 'entity_id', 'is_undone']);
         });
