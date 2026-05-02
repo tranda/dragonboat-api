@@ -2,18 +2,25 @@
 namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\{Http, Cache};
 
 class EventsImportController extends Controller {
     private const EVENTS_API = 'https://events.motion.rs/api';
+    private const TOKEN_TTL = 600; // 10 minutes
 
     private function login(string $username, string $password) {
+        $cacheKey = 'events_token_' . md5($username . '|' . $password);
+        $cached = Cache::get($cacheKey);
+        if ($cached) return $cached;
+
         $loginRes = Http::post(self::EVENTS_API . '/login', [
             'username' => $username,
             'password' => $password,
         ]);
         if (!$loginRes->successful()) return null;
-        return $loginRes->json('data.token') ?? $loginRes->json('token');
+        $token = $loginRes->json('data.token') ?? $loginRes->json('token');
+        if ($token) Cache::put($cacheKey, $token, self::TOKEN_TTL);
+        return $token;
     }
 
     public function fetchClubs(Request $request) {
