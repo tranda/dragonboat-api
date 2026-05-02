@@ -41,6 +41,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::get('/activity-log', [ActivityLogController::class, 'index']);
         Route::post('/events-import/athletes', [EventsImportController::class, 'fetchAthletes']);
+        Route::post('/events-import/clubs', [EventsImportController::class, 'fetchClubs']);
 
         Route::get('/competitions', [CompetitionController::class, 'index']);
         Route::post('/competitions', [CompetitionController::class, 'store']);
