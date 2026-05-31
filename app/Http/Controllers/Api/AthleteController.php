@@ -27,6 +27,11 @@ class AthleteController extends Controller {
 
     public function destroy($id) {
         $athlete = Athlete::where('team_id', request()->user()->team_id)->findOrFail($id);
+        // Removal is team-wide, so unregister from every competition first —
+        // that detaches each registration and clears that competition's crews.
+        foreach ($athlete->competitions()->pluck('competitions.id') as $compId) {
+            $this->unregisterFromCompetition($athlete, $compId);
+        }
         $athlete->update(['is_removed' => true]);
         ActivityLog::log('removed', 'athlete', $athlete->name);
         return response()->json(['message' => 'Athlete removed']);
@@ -49,19 +54,27 @@ class AthleteController extends Controller {
     public function unregister(Request $request, $id) {
         $compId = $request->input('competition_id');
         $athlete = Athlete::where('team_id', $request->user()->team_id)->findOrFail($id);
-        $athlete->competitions()->detach($compId);
-        $this->removeFromCompetitionLayouts($athlete, $compId, $request->user()->team_id);
+        $this->unregisterFromCompetition($athlete, $compId);
         return response()->json(['message' => 'Unregistered']);
     }
 
     /**
-     * Remove an athlete from every crew layout belonging to a single competition.
+     * Detach an athlete's registration for one competition and clear them out of
+     * every crew layout belonging to that competition.
+     */
+    private function unregisterFromCompetition(Athlete $athlete, $compId): void {
+        $athlete->competitions()->detach($compId);
+        $races = Race::where('competition_id', $compId)->where('team_id', $athlete->team_id)->get()->keyBy('id');
+        $this->removeAthleteFromLayouts($athlete, $races, 'unregistered');
+    }
+
+    /**
+     * Remove an athlete from every crew layout among the given races.
      * Each changed layout gets its own undoable activity-log entry, matching the
      * format LayoutController uses so the existing undo/redo endpoints work on it.
      */
-    private function removeFromCompetitionLayouts(Athlete $athlete, $compId, $teamId): void {
+    private function removeAthleteFromLayouts(Athlete $athlete, $races, string $reason): void {
         $athleteId = (int)$athlete->id;
-        $races = Race::where('competition_id', $compId)->where('team_id', $teamId)->get()->keyBy('id');
         $layouts = Layout::whereIn('race_id', $races->keys())->get();
 
         foreach ($layouts as $layout) {
@@ -106,7 +119,7 @@ class AthleteController extends Controller {
                 ->delete();
 
             $race = $races->get($layout->race_id);
-            $details = "unregistered {$athlete->name}: " . implode(', ', $seatsRemoved);
+            $details = "{$reason} {$athlete->name}: " . implode(', ', $seatsRemoved);
             ActivityLog::log('updated', 'layout', $race?->name ?? $layout->race_id, $details, (string)$layout->race_id, $oldState, $newState);
         }
     }
