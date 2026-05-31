@@ -25,11 +25,13 @@ class AthleteController extends Controller {
         return response()->json($athlete);
     }
 
-    public function destroy($id) {
-        $athlete = Athlete::where('team_id', request()->user()->team_id)->findOrFail($id);
-        // Removal is team-wide, so unregister from every competition first —
-        // that detaches each registration and clears that competition's crews.
-        foreach ($athlete->competitions()->pluck('competitions.id') as $compId) {
+    public function destroy(Request $request, $id) {
+        $athlete = Athlete::where('team_id', $request->user()->team_id)->findOrFail($id);
+        // Remove from this moment onward: unregister from the active competition
+        // (detach + clear its crews) but keep historical crews in other
+        // competitions intact.
+        $compId = $request->header('X-Competition-Id');
+        if ($compId) {
             $this->unregisterFromCompetition($athlete, $compId);
         }
         $athlete->update(['is_removed' => true]);
