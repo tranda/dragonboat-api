@@ -32,7 +32,7 @@ class LayoutController extends Controller {
 
         $race = Race::find($raceId);
         $details = $this->buildDiff($oldState, $newState);
-        ActivityLog::log('updated', 'layout', $race?->name ?? $raceId, $details, (string)$raceId, $oldState, $newState);
+        ActivityLog::log('updated', 'layout', $race?->name ?? $raceId, $details, (string)$raceId, $oldState, $newState, $race?->competition_id, $race?->team_id);
 
         return response()->json($this->respond($l->fresh(), $raceId));
     }

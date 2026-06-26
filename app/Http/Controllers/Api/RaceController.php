@@ -31,7 +31,7 @@ class RaceController extends Controller {
             ['display_order' => $maxOrder + 1, 'team_id' => $teamId, 'competition_id' => $compId]
         ));
         Layout::create(['race_id' => $race->id, 'drummer_id' => null, 'helm_id' => null, 'left_seats' => array_fill(0, $race->num_rows, null), 'right_seats' => array_fill(0, $race->num_rows, null), 'reserves' => []]);
-        ActivityLog::log('created', 'race', $race->name);
+        ActivityLog::log('created', 'race', $race->name, competitionId: $race->competition_id, teamId: $race->team_id);
         return response()->json($race, 201);
     }
 
@@ -47,13 +47,13 @@ class RaceController extends Controller {
     public function update(Request $request, $id) {
         $race = Race::where('team_id', $request->user()->team_id)->findOrFail($id);
         $race->update($request->only(['name', 'boat_type', 'num_rows', 'distance', 'gender_category', 'age_category', 'category']));
-        ActivityLog::log('updated', 'race', $race->name);
+        ActivityLog::log('updated', 'race', $race->name, competitionId: $race->competition_id, teamId: $race->team_id);
         return response()->json($race);
     }
 
     public function destroy(Request $request, $id) {
         $race = Race::where('team_id', $request->user()->team_id)->findOrFail($id);
-        ActivityLog::log('deleted', 'race', $race->name);
+        ActivityLog::log('deleted', 'race', $race->name, competitionId: $race->competition_id, teamId: $race->team_id);
         $race->delete();
         return response()->json(['message' => 'Race deleted']);
     }
@@ -65,7 +65,7 @@ class RaceController extends Controller {
         $newId = $race->id . '_copy_' . time();
         $newRace = Race::create(['id' => $newId, 'name' => $race->name . ' (copy)', 'boat_type' => $race->boat_type, 'num_rows' => $race->num_rows, 'distance' => $race->distance, 'gender_category' => $race->gender_category, 'age_category' => $race->age_category, 'category' => $race->category, 'team_id' => $teamId, 'competition_id' => $compId]);
         if ($layout) Layout::create(['race_id' => $newId, 'drummer_id' => $layout->drummer_id, 'helm_id' => $layout->helm_id, 'left_seats' => $layout->left_seats, 'right_seats' => $layout->right_seats, 'reserves' => $layout->reserves]);
-        ActivityLog::log('duplicated', 'race', $race->name, 'New: ' . $newRace->name);
+        ActivityLog::log('duplicated', 'race', $race->name, 'New: ' . $newRace->name, competitionId: $newRace->competition_id, teamId: $newRace->team_id);
         return response()->json($newRace, 201);
     }
 }

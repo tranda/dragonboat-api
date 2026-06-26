@@ -14,14 +14,14 @@ class AthleteController extends Controller {
         $data = $request->only(['name', 'weight', 'gender', 'year_of_birth', 'is_bcp', 'preferred_side', 'is_helm', 'is_drummer', 'edbf_id', 'notes']);
         $data['team_id'] = $request->user()->team_id;
         $athlete = Athlete::create($data);
-        ActivityLog::log('created', 'athlete', $athlete->name);
+        ActivityLog::log('created', 'athlete', $athlete->name, teamId: $athlete->team_id);
         return response()->json($athlete, 201);
     }
 
     public function update(Request $request, $id) {
         $athlete = Athlete::where('team_id', $request->user()->team_id)->findOrFail($id);
         $athlete->update($request->only(['name', 'weight', 'gender', 'year_of_birth', 'is_bcp', 'preferred_side', 'is_helm', 'is_drummer', 'edbf_id', 'notes', 'is_removed']));
-        ActivityLog::log('updated', 'athlete', $athlete->name);
+        ActivityLog::log('updated', 'athlete', $athlete->name, teamId: $athlete->team_id);
         return response()->json($athlete);
     }
 
@@ -35,14 +35,14 @@ class AthleteController extends Controller {
             $this->unregisterFromCompetition($athlete, $compId);
         }
         $athlete->update(['is_removed' => true]);
-        ActivityLog::log('removed', 'athlete', $athlete->name);
+        ActivityLog::log('removed', 'athlete', $athlete->name, competitionId: $compId ? (int)$compId : null, teamId: $athlete->team_id);
         return response()->json(['message' => 'Athlete removed']);
     }
 
     public function restore($id) {
         $athlete = Athlete::where('team_id', request()->user()->team_id)->findOrFail($id);
         $athlete->update(['is_removed' => false]);
-        ActivityLog::log('restored', 'athlete', $athlete->name);
+        ActivityLog::log('restored', 'athlete', $athlete->name, teamId: $athlete->team_id);
         return response()->json(['message' => 'Athlete restored']);
     }
 
@@ -122,7 +122,7 @@ class AthleteController extends Controller {
 
             $race = $races->get($layout->race_id);
             $details = "{$reason} {$athlete->name}: " . implode(', ', $seatsRemoved);
-            ActivityLog::log('updated', 'layout', $race?->name ?? $layout->race_id, $details, (string)$layout->race_id, $oldState, $newState);
+            ActivityLog::log('updated', 'layout', $race?->name ?? $layout->race_id, $details, (string)$layout->race_id, $oldState, $newState, $race?->competition_id, $race?->team_id);
         }
     }
 }
