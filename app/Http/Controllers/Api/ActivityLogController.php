@@ -9,7 +9,9 @@ class ActivityLogController extends Controller {
         $limit = min((int) ($request->query('limit', 50)), 200);
         $teamId = $request->user()->team_id;
 
-        $query = ActivityLog::where('team_id', $teamId);
+        // Include legacy rows with no team scope (created before scoping, or
+        // not attributable by the backfill) so existing history stays visible.
+        $query = ActivityLog::where(fn($q) => $q->where('team_id', $teamId)->orWhereNull('team_id'));
         // Optionally narrow to the active competition (plus team-wide entries
         // that carry no competition scope). Pass ?scope=competition to enable.
         if ($request->query('scope') === 'competition') {
