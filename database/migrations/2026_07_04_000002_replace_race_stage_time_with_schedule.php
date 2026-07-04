@@ -9,7 +9,9 @@ use Illuminate\Support\Facades\DB;
 return new class extends Migration {
     public function up(): void {
         Schema::table('races', function (Blueprint $table) {
-            $table->json('schedule')->nullable()->after('category');
+            // Stored as JSON text; MariaDB here doesn't accept the native `json` type,
+            // and the model casts `schedule` to array (same pattern as app_config).
+            $table->longText('schedule')->nullable()->after('category');
         });
 
         // Backfill: fold any existing single stage/scheduled_at into a one-item schedule.
