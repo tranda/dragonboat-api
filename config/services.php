@@ -31,4 +31,10 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    // Optional API key for the public read-only crew export (/api/public/crews).
+    // Leave unset for open access; set PUBLIC_CREWS_KEY in .env to require it.
+    'public_crews' => [
+        'key' => env('PUBLIC_CREWS_KEY'),
+    ],
+
 ];
