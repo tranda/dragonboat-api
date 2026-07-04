@@ -68,8 +68,7 @@ class InitController extends Controller {
                 'numRows' => $r->num_rows, 'distance' => $r->distance,
                 'genderCategory' => $r->gender_category, 'ageCategory' => $r->age_category,
                 'category' => $r->category,
-                'scheduledTime' => optional($r->scheduled_at)->toIso8601String(),
-                'stage' => $r->stage,
+                'schedule' => $r->schedule ?? [],
             ]);
 
         $raceIds = $races->pluck('id');
