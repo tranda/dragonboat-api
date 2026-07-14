@@ -28,7 +28,7 @@ class RaceController extends Controller {
         Competition::guardLocked($compId);
         $maxOrder = (int) Race::where('team_id', $teamId)->where('competition_id', $compId)->max('display_order');
         $race = Race::create(array_merge(
-            $request->only(['id', 'name', 'boat_type', 'num_rows', 'distance', 'gender_category', 'age_category', 'category', 'schedule']),
+            $request->only(['id', 'name', 'boat_type', 'num_rows', 'distance', 'gender_category', 'age_category', 'category', 'schedule', 'medal']),
             ['display_order' => $maxOrder + 1, 'team_id' => $teamId, 'competition_id' => $compId]
         ));
         Layout::create(['race_id' => $race->id, 'drummer_id' => null, 'helm_id' => null, 'left_seats' => array_fill(0, $race->num_rows, null), 'right_seats' => array_fill(0, $race->num_rows, null), 'reserves' => []]);
@@ -50,7 +50,8 @@ class RaceController extends Controller {
     public function update(Request $request, $id) {
         $race = Race::where('team_id', $request->user()->team_id)->findOrFail($id);
         Competition::guardLocked($race->competition_id);
-        $race->update($request->only(['name', 'boat_type', 'num_rows', 'distance', 'gender_category', 'age_category', 'category', 'schedule']));
+        $request->validate(['medal' => 'nullable|in:gold,silver,bronze']);
+        $race->update($request->only(['name', 'boat_type', 'num_rows', 'distance', 'gender_category', 'age_category', 'category', 'schedule', 'medal']));
         ActivityLog::log('updated', 'race', $race->name, competitionId: $race->competition_id, teamId: $race->team_id);
         return response()->json($race);
     }

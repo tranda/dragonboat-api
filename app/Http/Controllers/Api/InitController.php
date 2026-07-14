@@ -69,6 +69,7 @@ class InitController extends Controller {
                 'genderCategory' => $r->gender_category, 'ageCategory' => $r->age_category,
                 'category' => $r->category,
                 'schedule' => $r->schedule ?? [],
+                'medal' => $r->medal,
             ]);
 
         $raceIds = $races->pluck('id');
