@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
-use App\Models\{Athlete, ActivityLog, Race, Layout};
+use App\Models\{Athlete, ActivityLog, Race, Layout, Competition};
 use Illuminate\Http\Request;
 
 class AthleteController extends Controller {
@@ -30,8 +30,10 @@ class AthleteController extends Controller {
         // Remove from this moment onward: unregister from the active competition
         // (detach + clear its crews) but keep historical crews in other
         // competitions intact.
+        // Skip when the active competition is locked: its crews are frozen, so the
+        // athlete stays in them. The team-wide is_removed flag is still applied below.
         $compId = $request->header('X-Competition-Id');
-        if ($compId) {
+        if ($compId && !Competition::isLockedById($compId)) {
             $this->unregisterFromCompetition($athlete, $compId);
         }
         $athlete->update(['is_removed' => true]);
@@ -48,6 +50,7 @@ class AthleteController extends Controller {
 
     public function register(Request $request, $id) {
         $compId = $request->input('competition_id');
+        Competition::guardLocked($compId);
         $athlete = Athlete::where('team_id', $request->user()->team_id)->findOrFail($id);
         $athlete->competitions()->syncWithoutDetaching([$compId]);
         return response()->json(['message' => 'Registered']);
@@ -55,6 +58,7 @@ class AthleteController extends Controller {
 
     public function unregister(Request $request, $id) {
         $compId = $request->input('competition_id');
+        Competition::guardLocked($compId);
         $athlete = Athlete::where('team_id', $request->user()->team_id)->findOrFail($id);
         $this->unregisterFromCompetition($athlete, $compId);
         return response()->json(['message' => 'Unregistered']);

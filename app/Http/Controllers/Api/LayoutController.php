@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
-use App\Models\{Layout, ActivityLog, Race, Athlete};
+use App\Models\{Layout, ActivityLog, Race, Athlete, Competition};
 use Illuminate\Http\Request;
 
 class LayoutController extends Controller {
@@ -11,6 +11,7 @@ class LayoutController extends Controller {
     }
 
     public function update(Request $request, $raceId) {
+        Competition::guardLocked(Race::where('id', $raceId)->value('competition_id'));
         $l = Layout::where('race_id', $raceId)->firstOrFail();
 
         $oldState = $this->captureState($l);
@@ -38,6 +39,7 @@ class LayoutController extends Controller {
     }
 
     public function undo($raceId) {
+        Competition::guardLocked(Race::where('id', $raceId)->value('competition_id'));
         $entry = ActivityLog::where('entity_type', 'layout')
             ->where('entity_id', (string)$raceId)
             ->where('is_undone', false)
@@ -54,6 +56,7 @@ class LayoutController extends Controller {
     }
 
     public function redo($raceId) {
+        Competition::guardLocked(Race::where('id', $raceId)->value('competition_id'));
         $entry = ActivityLog::where('entity_type', 'layout')
             ->where('entity_id', (string)$raceId)
             ->where('is_undone', true)
