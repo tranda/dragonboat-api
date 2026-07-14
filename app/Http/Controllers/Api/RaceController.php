@@ -25,6 +25,7 @@ class RaceController extends Controller {
     public function store(Request $request) {
         $request->validate(['id' => 'required|string|unique:races,id', 'name' => 'required|string', 'boat_type' => 'required|in:standard,small', 'num_rows' => 'required|integer', 'gender_category' => 'required|in:Open,Women,Mixed', 'age_category' => 'required|string']);
         [$teamId, $compId] = $this->getScope($request);
+        Competition::guardLocked($compId);
         $maxOrder = (int) Race::where('team_id', $teamId)->where('competition_id', $compId)->max('display_order');
         $race = Race::create(array_merge(
             $request->only(['id', 'name', 'boat_type', 'num_rows', 'distance', 'gender_category', 'age_category', 'category', 'schedule']),
@@ -37,6 +38,8 @@ class RaceController extends Controller {
 
     public function reorder(Request $request) {
         $request->validate(['ids' => 'required|array', 'ids.*' => 'string']);
+        [, $compId] = $this->getScope($request);
+        Competition::guardLocked($compId);
         foreach ($request->ids as $i => $id) {
             Race::where('id', $id)->where('team_id', $request->user()->team_id)->update(['display_order' => $i]);
         }
@@ -46,6 +49,7 @@ class RaceController extends Controller {
 
     public function update(Request $request, $id) {
         $race = Race::where('team_id', $request->user()->team_id)->findOrFail($id);
+        Competition::guardLocked($race->competition_id);
         $race->update($request->only(['name', 'boat_type', 'num_rows', 'distance', 'gender_category', 'age_category', 'category', 'schedule']));
         ActivityLog::log('updated', 'race', $race->name, competitionId: $race->competition_id, teamId: $race->team_id);
         return response()->json($race);
@@ -53,6 +57,7 @@ class RaceController extends Controller {
 
     public function destroy(Request $request, $id) {
         $race = Race::where('team_id', $request->user()->team_id)->findOrFail($id);
+        Competition::guardLocked($race->competition_id);
         ActivityLog::log('deleted', 'race', $race->name, competitionId: $race->competition_id, teamId: $race->team_id);
         $race->delete();
         return response()->json(['message' => 'Race deleted']);
@@ -60,6 +65,7 @@ class RaceController extends Controller {
 
     public function duplicate(Request $request, $id) {
         [$teamId, $compId] = $this->getScope($request);
+        Competition::guardLocked($compId);
         $race = Race::where('team_id', $teamId)->findOrFail($id);
         $layout = Layout::where('race_id', $id)->first();
         $newId = $race->id . '_copy_' . time();
