@@ -1,6 +1,6 @@
 <?php
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\{AuthController, AthleteController, RaceController, LayoutController, ConfigController, InitController, UserController, ImportController, ActivityLogController, CrewSheetController, CompetitionController, TeamController, EventsImportController, ChangesController, PublicCrewController};
+use App\Http\Controllers\Api\{AuthController, AthleteController, RaceController, LayoutController, ConfigController, InitController, UserController, ImportController, ActivityLogController, CrewSheetController, CompetitionController, TeamController, EventsImportController, ChangesController, PublicCrewController, ReportExportController};
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/crew-sheet', [CrewSheetController::class, 'show']);
@@ -32,6 +32,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/races/{id}', [RaceController::class, 'update']);
         Route::delete('/races/{id}', [RaceController::class, 'destroy']);
         Route::post('/races/{id}/duplicate', [RaceController::class, 'duplicate']);
+
+        // Per-member achievements pivot for one event + club, streamed as CSV.
+        Route::get('/report/export', [ReportExportController::class, 'csv']);
 
         Route::put('/layouts/{raceId}', [LayoutController::class, 'update']);
         Route::post('/layouts/{raceId}/undo', [LayoutController::class, 'undo']);
