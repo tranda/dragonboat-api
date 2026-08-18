@@ -56,6 +56,9 @@ class PublicResultsController extends Controller
                 $a = $athletes->get($athleteId);
                 if (!$a) continue; // no member_id → not matchable club-side
                 $results[] = [
+                    // Stable competition PK — dedupe on this, not the display name (which
+                    // changes on rename). Same id as GET /api/public/competitions.
+                    'competitionId' => (int) $race->competition_id,
                     'memberId' => (int) $a->member_id,
                     'name' => $a->name,
                     'event' => $comp?->name,
