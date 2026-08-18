@@ -1,6 +1,6 @@
 <?php
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\{AuthController, AthleteController, RaceController, LayoutController, ConfigController, InitController, UserController, ImportController, ActivityLogController, CrewSheetController, CompetitionController, TeamController, EventsImportController, ChangesController, PublicCrewController, ReportExportController, ClubImportController, PublicResultsController};
+use App\Http\Controllers\Api\{AuthController, AthleteController, RaceController, LayoutController, ConfigController, InitController, UserController, ImportController, ActivityLogController, CrewSheetController, CompetitionController, TeamController, EventsImportController, ChangesController, PublicCrewController, ReportExportController, ClubImportController, PublicResultsController, PublicListController};
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/crew-sheet', [CrewSheetController::class, 'show']);
@@ -8,6 +8,9 @@ Route::get('/crew-sheet', [CrewSheetController::class, 'show']);
 Route::get('/public/crews', [PublicCrewController::class, 'index']);
 // Public read-only medal results feed for club.motion.rs to pull (see CLUB_RESULTS_KEY).
 Route::get('/public/results', [PublicResultsController::class, 'index']);
+// Public read-only lists for club.motion.rs to populate team + competition dropdowns.
+Route::get('/public/teams', [PublicListController::class, 'teams']);
+Route::get('/public/competitions', [PublicListController::class, 'competitions']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
