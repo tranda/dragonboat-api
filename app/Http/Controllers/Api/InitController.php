@@ -49,6 +49,7 @@ class InitController extends Controller {
             'gender' => $a->gender, 'yearOfBirth' => $a->year_of_birth,
             'isBCP' => $a->is_bcp, 'preferredSide' => $a->preferred_side,
             'isHelm' => $a->is_helm, 'isDrummer' => $a->is_drummer, 'edbfId' => $a->edbf_id,
+            'memberId' => $a->member_id,
             'notes' => $a->notes, 'isRemoved' => $a->is_removed,
             'isRegistered' => isset($registeredSet[$a->id]),
             'raceAssignments' => [],

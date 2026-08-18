@@ -1,6 +1,6 @@
 <?php
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\{AuthController, AthleteController, RaceController, LayoutController, ConfigController, InitController, UserController, ImportController, ActivityLogController, CrewSheetController, CompetitionController, TeamController, EventsImportController, ChangesController, PublicCrewController, ReportExportController};
+use App\Http\Controllers\Api\{AuthController, AthleteController, RaceController, LayoutController, ConfigController, InitController, UserController, ImportController, ActivityLogController, CrewSheetController, CompetitionController, TeamController, EventsImportController, ChangesController, PublicCrewController, ReportExportController, ClubImportController};
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/crew-sheet', [CrewSheetController::class, 'show']);
@@ -48,6 +48,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/activity-log', [ActivityLogController::class, 'index']);
         Route::post('/events-import/athletes', [EventsImportController::class, 'fetchAthletes']);
         Route::post('/events-import/clubs', [EventsImportController::class, 'fetchClubs']);
+
+        // Sync membership numbers from club.motion.rs onto the active team's athletes.
+        Route::post('/club-import/sync', [ClubImportController::class, 'sync']);
 
         Route::get('/competitions', [CompetitionController::class, 'index']);
         Route::post('/competitions', [CompetitionController::class, 'store']);

@@ -61,15 +61,13 @@ class ReportExportController extends Controller {
         $members = Athlete::where('team_id', $teamId)
             ->where('is_removed', false)
             ->whereIn('id', $registeredIds)
-            ->get(['id', 'name', 'edbf_id']);
+            ->get(['id', 'name', 'member_id']);
 
-        // Sort rows by membership number ascending (numeric when possible, blanks last).
+        // Sort rows by club membership number ascending; members without one sort last.
         $members = $members->sort(function ($a, $b) {
-            $an = is_numeric($a->edbf_id); $bn = is_numeric($b->edbf_id);
-            if ($an && $bn) return (int) $a->edbf_id <=> (int) $b->edbf_id;
-            if ($an !== $bn) return $an ? -1 : 1; // numeric IDs before blank/non-numeric
-            return strcmp((string) $a->edbf_id, (string) $b->edbf_id)
-                ?: strcmp((string) $a->name, (string) $b->name);
+            if ($a->member_id !== null && $b->member_id !== null) return $a->member_id <=> $b->member_id;
+            if (($a->member_id !== null) !== ($b->member_id !== null)) return $a->member_id !== null ? -1 : 1;
+            return strcmp((string) $a->name, (string) $b->name);
         })->values();
 
         $filename = $comp->name;
@@ -87,7 +85,7 @@ class ReportExportController extends Controller {
             fputcsv($out, $header);
 
             foreach ($members as $m) {
-                $row = [$m->edbf_id, $m->name];
+                $row = [$m->member_id, $m->name];
                 foreach ($races as $race) {
                     $row[] = $medalByAthleteRace[$m->id][(string) $race->id] ?? '';
                 }
