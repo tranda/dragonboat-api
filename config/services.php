@@ -37,4 +37,10 @@ return [
         'key' => env('PUBLIC_CREWS_KEY'),
     ],
 
+    // Optional API key for the public read-only results feed (/api/public/results),
+    // pulled by club.motion.rs. Set CLUB_RESULTS_KEY in .env to require it.
+    'club_results' => [
+        'key' => env('CLUB_RESULTS_KEY'),
+    ],
+
 ];

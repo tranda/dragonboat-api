@@ -1,11 +1,13 @@
 <?php
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\{AuthController, AthleteController, RaceController, LayoutController, ConfigController, InitController, UserController, ImportController, ActivityLogController, CrewSheetController, CompetitionController, TeamController, EventsImportController, ChangesController, PublicCrewController, ReportExportController, ClubImportController};
+use App\Http\Controllers\Api\{AuthController, AthleteController, RaceController, LayoutController, ConfigController, InitController, UserController, ImportController, ActivityLogController, CrewSheetController, CompetitionController, TeamController, EventsImportController, ChangesController, PublicCrewController, ReportExportController, ClubImportController, PublicResultsController};
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/crew-sheet', [CrewSheetController::class, 'show']);
 // Public read-only crew/roster export for EDBF (open for now; see PUBLIC_CREWS_KEY).
 Route::get('/public/crews', [PublicCrewController::class, 'index']);
+// Public read-only medal results feed for club.motion.rs to pull (see CLUB_RESULTS_KEY).
+Route::get('/public/results', [PublicResultsController::class, 'index']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
