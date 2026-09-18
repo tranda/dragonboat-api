@@ -53,6 +53,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/activity-log', [ActivityLogController::class, 'index']);
         Route::post('/events-import/athletes', [EventsImportController::class, 'fetchAthletes']);
         Route::post('/events-import/clubs', [EventsImportController::class, 'fetchClubs']);
+        Route::get('/events-import/events', [EventsImportController::class, 'fetchEventsList']);
+        Route::get('/events-import/race-clubs', [EventsImportController::class, 'fetchRaceClubs']);
+        Route::get('/events-import/races', [EventsImportController::class, 'fetchRaces']);
 
         // Sync membership numbers from club.motion.rs onto the active team's athletes.
         Route::post('/club-import/sync', [ClubImportController::class, 'sync']);

@@ -43,4 +43,11 @@ return [
         'key' => env('CLUB_RESULTS_KEY'),
     ],
 
+    // events.motion.rs race import. Paste a long-lived races.read API key
+    // (created once on events.motion.rs). The event and club are chosen in the
+    // UI at import time. Used by EventsImportController::fetchRaces.
+    'events' => [
+        'api_key' => env('EVENTS_API_KEY'),
+    ],
+
 ];
