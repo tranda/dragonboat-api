@@ -146,6 +146,7 @@ class EventsImportController extends Controller {
                     'age_category' => $this->mapAge($ageGroup),
                     'category' => $name,
                     'schedule' => [],
+                    'medal' => null,
                 ];
             }
 
@@ -153,6 +154,17 @@ class EventsImportController extends Controller {
             $time = $row['race_time'] ?? null;
             if ($stage !== '' && $time) {
                 $byDiscipline[$did]['schedule'][] = ['stage' => $stage, 'time' => $time];
+            }
+
+            // Medal from the final round: our club has at most one crew in a
+            // discipline's final, so the first finished podium placing wins.
+            foreach ($row['crew_results'] ?? [] as $cr) {
+                if (!($cr['is_final_round'] ?? false)) continue;
+                $pos = $cr['position'] ?? null;
+                $status = $cr['final_status'] ?? $cr['status'] ?? null;
+                if ($status !== null && $status !== 'FINISHED') continue;
+                $medal = [1 => 'gold', 2 => 'silver', 3 => 'bronze'][$pos] ?? null;
+                if ($medal) $byDiscipline[$did]['medal'] = $medal;
             }
         }
 
