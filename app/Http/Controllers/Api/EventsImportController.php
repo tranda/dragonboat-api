@@ -172,7 +172,10 @@ class EventsImportController extends Controller {
     }
 
     private function mapBoatType(string $g): string {
-        return str_contains(strtolower($g), '10') ? 'small' : 'standard';
+        // events.motion.rs boat_group is the word "Small"/"Standard" (some feeds
+        // use "10s"/"20s"). Anything small-ish → small, else standard.
+        $g = strtolower($g);
+        return (str_contains($g, 'small') || str_contains($g, '10')) ? 'small' : 'standard';
     }
 
     private function mapGender(string $g): string {
