@@ -3,8 +3,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 class Competition extends Model {
-    protected $fillable = ['name', 'year', 'location', 'is_active', 'is_locked', 'gender_policy', 'reserves'];
-    protected $casts = ['is_active' => 'boolean', 'is_locked' => 'boolean', 'gender_policy' => 'array', 'reserves' => 'array'];
+    protected $fillable = ['name', 'year', 'location', 'is_active', 'is_locked', 'gender_policy', 'reserves', 'younger_allowance'];
+    protected $casts = ['is_active' => 'boolean', 'is_locked' => 'boolean', 'gender_policy' => 'array', 'reserves' => 'array', 'younger_allowance' => 'integer'];
 
     public function teams() { return $this->belongsToMany(Team::class, 'competition_team'); }
     public function athletes() { return $this->belongsToMany(Athlete::class, 'competition_athlete'); }

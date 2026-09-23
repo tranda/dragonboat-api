@@ -11,7 +11,7 @@ class CompetitionController extends Controller {
 
     public function store(Request $request) {
         $request->validate(['name' => 'required|string', 'year' => 'required|integer']);
-        $comp = Competition::create($request->only(['name', 'year', 'location', 'is_active', 'is_locked', 'gender_policy', 'reserves']));
+        $comp = Competition::create($request->only(['name', 'year', 'location', 'is_active', 'is_locked', 'gender_policy', 'reserves', 'younger_allowance']));
         return response()->json($comp, 201);
     }
 
@@ -25,7 +25,7 @@ class CompetitionController extends Controller {
             $comp->update(['is_locked' => $request->boolean('is_locked')]);
             return response()->json($comp);
         }
-        $comp->update($request->only(['name', 'year', 'location', 'is_active', 'is_locked', 'gender_policy', 'reserves']));
+        $comp->update($request->only(['name', 'year', 'location', 'is_active', 'is_locked', 'gender_policy', 'reserves', 'younger_allowance']));
         return response()->json($comp);
     }
 
