@@ -103,7 +103,7 @@ class InitController extends Controller {
         if (!$isAdmin && $teamId) {
             $compQuery->whereHas('teams', fn($q) => $q->where('teams.id', $teamId));
         }
-        $competitions = $compQuery->get()->map(fn($c) => ['id' => $c->id, 'name' => $c->name, 'year' => $c->year, 'location' => $c->location, 'isActive' => $c->is_active, 'isLocked' => $c->is_locked, 'genderPolicy' => $c->gender_policy, 'reserves' => $c->reserves, 'youngerAllowance' => $c->younger_allowance]);
+        $competitions = $compQuery->get()->map(fn($c) => ['id' => $c->id, 'name' => $c->name, 'year' => $c->year, 'location' => $c->location, 'isActive' => $c->is_active, 'isLocked' => $c->is_locked, 'genderPolicy' => $c->gender_policy, 'reserves' => $c->reserves, 'youngerAllowance' => $c->younger_allowance, 'helmAnyGender' => $c->helm_any_gender]);
 
         // User's teams
         $userTeams = $user->teams->map(fn($t) => ['id' => $t->id, 'name' => $t->name]);
