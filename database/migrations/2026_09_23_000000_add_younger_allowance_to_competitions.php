@@ -6,10 +6,10 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
     // Max number of younger (adjacent-band) paddlers allowed per crew in an
-    // older age category. Organizer discretion; default 1.
+    // older age category. Organizer discretion; default 0 (none) unless enabled.
     public function up(): void {
         Schema::table('competitions', function (Blueprint $table) {
-            $table->integer('younger_allowance')->default(1);
+            $table->integer('younger_allowance')->default(0);
         });
     }
 
